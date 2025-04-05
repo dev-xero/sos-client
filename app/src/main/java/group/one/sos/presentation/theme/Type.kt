@@ -1,4 +1,4 @@
-package group.one.sos.ui.theme
+package group.one.sos.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -7,7 +7,6 @@ plugins {
 android {
     namespace = "group.one.sos"
     compileSdk = 35
-
     defaultConfig {
         applicationId = "group.one.sos"
         minSdk = 24
@@ -17,7 +16,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -40,7 +38,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -56,4 +53,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    // Application specific
+    implementation(libs.core.splashscreen)
 }

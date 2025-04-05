@@ -11,17 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import group.one.sos.ui.theme.SOSTheme
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import group.one.sos.presentation.theme.SOSTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             SOSTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "SOS",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
