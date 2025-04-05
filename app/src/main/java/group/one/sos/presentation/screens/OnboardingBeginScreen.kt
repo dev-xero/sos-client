@@ -29,8 +29,7 @@ import group.one.sos.presentation.theme.SOSTheme
 fun OnboardingBeginScreen(
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         Box(
             modifier = modifier
                 .fillMaxSize()
