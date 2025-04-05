@@ -1,6 +1,7 @@
 package group.one.sos.data.local.preferences
 
-// Object collection of preference keys
+import androidx.datastore.preferences.core.booleanPreferencesKey
+
 object PreferenceKeys {
-    const val ONBOARDING_KEY = "onboarding_completed"
+    val ONBOARDING_KEY = booleanPreferencesKey("onboarding_completed")
 }

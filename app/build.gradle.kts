@@ -57,7 +57,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // APPLICATION
     implementation(libs.core.splashscreen)
-    implementation(libs.androidx.datastore.prefrences)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.hilt.android)
     ksp(libs.dagger.compiler)
     ksp(libs.hilt.android.compiler)
