@@ -3,7 +3,6 @@ package group.one.sos.data.local.preferences
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,7 +24,7 @@ class PreferenceManager @Inject constructor(private val context: Context) {
     }
 
     // Completes onboarding by setting state to true
-    suspend fun setOnboardingCompleted() {
+    suspend fun completeOnboarding() {
         context.appDataStore.edit { prefs -> prefs[PreferenceKeys.ONBOARDING_KEY] = true }
     }
 }
