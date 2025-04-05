@@ -14,7 +14,7 @@ import group.one.sos.R
 import group.one.sos.presentation.theme.SOSTheme
 
 @Composable
-fun OnboardingScreen(
+fun OnboardingBeginScreen(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -35,6 +35,6 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingScreenPreview() {
     SOSTheme {
-        OnboardingScreen()
+        OnboardingBeginScreen()
     }
 }

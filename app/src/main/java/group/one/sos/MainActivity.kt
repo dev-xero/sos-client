@@ -12,13 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
+import group.one.sos.data.local.preferences.PreferenceManager
+import group.one.sos.domain.usecases.OnboardingUseCase
 import group.one.sos.presentation.theme.SOSTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private lateinit var onboardingUseCase: OnboardingUseCase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Initialize preference manager and onboarding use case
+        onboardingUseCase = OnboardingUseCase(PreferenceManager(applicationContext))
+        val isOnboardingCompleted = onboardingUseCase.isOnboardingCompleted()
+
         setContent {
             SOSTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
