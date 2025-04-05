@@ -1,7 +1,6 @@
 package group.one.sos.core.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,12 +14,11 @@ fun NavigationGraph(
     isOnboardingCompleted: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val scope = rememberCoroutineScope()
     NavHost(
         navController = navController,
         startDestination =
-            if (isOnboardingCompleted) NavigationRoute.OnboardingBegin.route
-            else NavigationRoute.Home.route,
+            if (isOnboardingCompleted) NavigationRoute.Home.route
+            else NavigationRoute.OnboardingBegin.route,
         modifier = modifier
     ) {
         composable(route = NavigationRoute.OnboardingBegin.route) {

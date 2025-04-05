@@ -31,7 +31,7 @@ fun OnboardingBeginScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun OnboardingScreenPreview() {
     SOSTheme {
