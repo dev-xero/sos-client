@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SOS</string>
+    <string name="onboarding_text">Instant alerts to the nearest emergency responders with just a click</string>
 </resources>
