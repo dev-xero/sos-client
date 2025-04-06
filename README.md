@@ -92,3 +92,4 @@ cd sos-client
 ## Contributors
 
 - [Elochukwu Okafor (Team Lead)](https://github.com/dev-xero)
+- [Nwolisa Vincent (Assistant Team Lead)] (https://github.com/NwolisaVincent)
