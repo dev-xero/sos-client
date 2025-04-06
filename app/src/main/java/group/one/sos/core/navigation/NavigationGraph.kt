@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import group.one.sos.presentation.screens.HomeScreen
+import group.one.sos.presentation.screens.LocationServicesScreen
 import group.one.sos.presentation.screens.OnboardingBeginScreen
 
 @Composable
@@ -22,10 +23,16 @@ fun NavigationGraph(
         modifier = modifier
     ) {
         composable(route = NavigationRoute.OnboardingBegin.route) {
-            OnboardingBeginScreen()
+            OnboardingBeginScreen(onGetStartedClicked = {
+                navController.navigate(NavigationRoute.LocationPermission.route)
+            })
+        }
+        composable(route = NavigationRoute.LocationPermission.route) {
+            LocationServicesScreen()
         }
         composable(route = NavigationRoute.Home.route) {
             HomeScreen()
         }
+
     }
 }

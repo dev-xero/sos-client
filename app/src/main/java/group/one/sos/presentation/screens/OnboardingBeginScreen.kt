@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,10 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import group.one.sos.R
 import group.one.sos.presentation.theme.SOSTheme
+import group.one.sos.presentation.ui.FilledIconButton
 
 @Composable
 fun OnboardingBeginScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onGetStartedClicked: () -> Unit
 ) {
     Scaffold { innerPadding ->
         Box(
@@ -48,19 +51,11 @@ fun OnboardingBeginScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(text = stringResource(R.string.onboarding_text))
                 Spacer(modifier = Modifier.height(24.dp))
-                Button(
-                    onClick = { /* TODO: Move to next stage */ },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(text = stringResource(R.string.get_started_btn))
-                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                    Icon(
-                        painter = painterResource(R.drawable.ic_right_arrow),
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                }
+                FilledIconButton(
+                    action = onGetStartedClicked,
+                    iconResource = R.drawable.ic_right_arrow,
+                    textResource = R.string.get_started_btn
+                )
             }
         }
     }
@@ -70,6 +65,6 @@ fun OnboardingBeginScreen(
 @Composable
 private fun OnboardingScreenPreview() {
     SOSTheme {
-        OnboardingBeginScreen()
+        OnboardingBeginScreen(onGetStartedClicked = {})
     }
 }

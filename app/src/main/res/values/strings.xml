@@ -2,4 +2,7 @@
     <string name="app_name">SOS</string>
     <string name="onboarding_text">Instant alerts to the nearest emergency responders with just a click</string>
     <string name="get_started_btn">Get Started</string>
+    <string name="location_services">Location Services</string>
+    <string name="location_services_desc">SOS needs access to your location to send help to the right place in an emergency</string>
+    <string name="request_location_permission">Request Permission</string>
 </resources>
