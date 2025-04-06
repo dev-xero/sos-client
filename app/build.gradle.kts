@@ -58,6 +58,7 @@ dependencies {
     // APPLICATION
     implementation(libs.core.splashscreen)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.animation)
     implementation(libs.hilt.android)
     ksp(libs.dagger.compiler)
     ksp(libs.hilt.android.compiler)
