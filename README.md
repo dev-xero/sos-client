@@ -1,3 +1,8 @@
+
+<p align="center">
+  <image src="https://github.com/user-attachments/assets/fddee0c0-07f5-4cb3-a5b4-41f8c995ee71" width="480px" align="center"/>
+</p>
+
 # SOS - Emergency Response System (ERS)
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9-purple?logo=kotlin&style=for-the-badge&colorA=131820&colorB=FFFFFF)
