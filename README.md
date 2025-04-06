@@ -8,9 +8,9 @@
 ![](https://img.shields.io/badge/Jetpack%20Compose-UI-blue?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=android)
 ![](https://img.shields.io/github/license/dev-xero/sos-client?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=github)
 
-The SOS client is a Kotlin-based Android app for an **Emergency Response System (ERS)**, that quickly alerts emergency services with a single tap. It shares the user’s real-time location and notifies configured contacts instantly.
+The SOS client is a Kotlin-based Android app for an **Emergency Response System (ERS)** that can quickly alert emergency services with a single tap. It shares the user’s real-time location and notifies configured contacts instantly.
 
-Written with Jetpack Compose, and integrates with our Spring Boot [backend](https://github.com/Anuolu-2020/sos-backend). This source code is part of the CSC 211 (Software Workshop II) course project for group 1.
+Written with Jetpack Compose and integrates with our Spring Boot [backend](https://github.com/Anuolu-2020/sos-backend). This source code is part of the CSC 211 (Software Workshop II) course project for group 1.
 
 ## Features
 
