@@ -1,15 +1,14 @@
 
 <p align="center">
-  <image src="https://github.com/user-attachments/assets/fddee0c0-07f5-4cb3-a5b4-41f8c995ee71" width="480px" align="center"/>
+  <image src="https://github.com/user-attachments/assets/d56c8eaa-ab3d-40bf-9e78-f20c77fd8a57"/>
 </p>
 
-# SOS - Emergency Response System (ERS)
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9-purple?logo=kotlin&style=for-the-badge&colorA=131820&colorB=FFFFFF)
 ![](https://img.shields.io/badge/Jetpack%20Compose-UI-blue?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=android)
-![](https://img.shields.io/github/license/dev-xero/sos-client?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=markdown)
+![](https://img.shields.io/github/license/dev-xero/sos-client?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=github)
 
-The SOS client is a Kotlin-based Android app for quickly alerting emergency services with a single tap. It shares the user’s real-time location and notifies configured contacts instantly.
+The SOS client is a Kotlin-based Android app for an **Emergency Response System (ERS)**, that quickly alerts emergency services with a single tap. It shares the user’s real-time location and notifies configured contacts instantly.
 
 Written with Jetpack Compose, and integrates with our Spring Boot [backend](https://github.com/Anuolu-2020/sos-backend). This source code is part of the CSC 211 (Software Workshop II) course project for group 1.
 
