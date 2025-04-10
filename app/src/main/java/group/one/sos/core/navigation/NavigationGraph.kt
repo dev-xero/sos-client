@@ -1,17 +1,12 @@
 package group.one.sos.core.navigation
 
-import android.util.Log
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import group.one.sos.core.utils.Tag
 import group.one.sos.presentation.screens.HomeScreen
 import group.one.sos.presentation.screens.LocationServicesScreen
 import group.one.sos.presentation.screens.OnboardingBeginScreen
@@ -59,9 +54,11 @@ fun NavigationGraph(
             })
         }
         composable(route = NavigationRoute.LocationPermission.route) {
-            LocationServicesScreen(requestLocationPermission = {
-
-            })
+            LocationServicesScreen(
+                onPermissionGranted = {
+                    // TODO: navigate to contacts page if not set
+                },
+            )
         }
         composable(route = NavigationRoute.Home.route) {
             HomeScreen()

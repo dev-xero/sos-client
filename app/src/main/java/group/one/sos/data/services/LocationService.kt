@@ -1,4 +1,4 @@
-package group.one.sos.data.location
+package group.one.sos.data.services
 
 import android.annotation.SuppressLint
 import android.content.Context

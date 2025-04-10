@@ -19,12 +19,24 @@ class PreferenceManager @Inject constructor(private val context: Context) {
     // Returns the onboarding state stored in preferences
     fun isOnboardingCompleted(): Flow<Boolean> {
         val isCompleted =
-            context.appDataStore.data.map { prefs -> prefs[PreferenceKeys.ONBOARDING_KEY] ?: false }
+            context.appDataStore.data.map { prefs -> prefs[PreferenceKeys.ONBOARDING_KEY] == true }
         return isCompleted
     }
 
     // Completes onboarding by setting state to true
     suspend fun completeOnboarding() {
         context.appDataStore.edit { prefs -> prefs[PreferenceKeys.ONBOARDING_KEY] = true }
+    }
+
+    suspend fun grantLocationPermission() {
+        context.appDataStore.edit { prefs ->
+            prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY] = true
+        }
+    }
+
+    suspend fun revokeLocationPermission() {
+        context.appDataStore.edit { prefs ->
+            prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY] = false
+        }
     }
 }
