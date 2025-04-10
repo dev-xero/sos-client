@@ -24,7 +24,8 @@ import group.one.sos.presentation.ui.FilledButton
 
 @Composable
 fun LocationServicesScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    requestLocationPermission: () -> Unit
 ) {
     Scaffold { innerPadding ->
         Box(
@@ -57,7 +58,7 @@ fun LocationServicesScreen(
                 )
                 Spacer(modifier = modifier.height(24.dp))
                 FilledButton(
-                    action = { /* TODO: Request location permission */ },
+                    action = requestLocationPermission,
                     textResource = R.string.request_location_permission
                 )
             }
