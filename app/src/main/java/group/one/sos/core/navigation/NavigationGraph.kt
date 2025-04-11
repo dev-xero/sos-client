@@ -1,27 +1,36 @@
 package group.one.sos.core.navigation
 
+import android.Manifest
+import android.content.Context
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import group.one.sos.data.local.preferences.PreferenceKeys
+import group.one.sos.data.local.preferences.appDataStore
 import group.one.sos.presentation.screens.HomeScreen
 import group.one.sos.presentation.screens.LocationServicesScreen
 import group.one.sos.presentation.screens.OnboardingBeginScreen
+import kotlinx.coroutines.flow.map
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
-    isOnboardingCompleted: Boolean,
+    startDestination: NavigationRoute,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination =
-            if (isOnboardingCompleted) NavigationRoute.Home.route
-            else NavigationRoute.OnboardingBegin.route,
+        startDestination = startDestination.route,
         modifier = modifier,
         enterTransition = {
             slideIntoContainer(
@@ -54,11 +63,7 @@ fun NavigationGraph(
             })
         }
         composable(route = NavigationRoute.LocationPermission.route) {
-            LocationServicesScreen(
-                onPermissionGranted = {
-                    // TODO: navigate to contacts page if not set
-                },
-            )
+            LocationServicesScreen()
         }
         composable(route = NavigationRoute.Home.route) {
             HomeScreen()

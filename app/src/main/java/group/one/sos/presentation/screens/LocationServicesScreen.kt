@@ -37,7 +37,6 @@ import group.one.sos.presentation.viewmodels.LocationServiceViewModel
 fun LocationServicesScreen(
     modifier: Modifier = Modifier,
     viewModel: LocationServiceViewModel = hiltViewModel(),
-    onPermissionGranted: () -> Unit
 ) {
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 

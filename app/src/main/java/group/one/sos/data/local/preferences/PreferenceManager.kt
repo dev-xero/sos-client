@@ -28,6 +28,12 @@ class PreferenceManager @Inject constructor(private val context: Context) {
         context.appDataStore.edit { prefs -> prefs[PreferenceKeys.ONBOARDING_KEY] = true }
     }
 
+    fun isLocationPermissionGranted(): Flow<Boolean> {
+        val isGranted =
+            context.appDataStore.data.map { prefs -> prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY] == true }
+        return isGranted
+    }
+
     suspend fun grantLocationPermission() {
         context.appDataStore.edit { prefs ->
             prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY] = true
