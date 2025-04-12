@@ -16,6 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -39,23 +43,29 @@ fun LocationServicesScreen(
     viewModel: LocationServiceViewModel = hiltViewModel(),
 ) {
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+    var hasRequested by remember { mutableStateOf(false) }
+    var rationaleText by remember { mutableStateOf("") }
+    var showDeniedMessage by remember { mutableStateOf(false) }
 
     // Observe whenever permission state changes
     LaunchedEffect(permissionState.status) {
-       when {
-           permissionState.status.isGranted -> {
-               Log.d(Tag.LocationService.name, "Location permission granted.")
-               viewModel.grantLocationPermission()
-           }
-           permissionState.status.shouldShowRationale -> {
-               // display rationale dialog
-               Log.d(Tag.LocationService.name, "We need location permission to proceed.")
-           }
-           else -> {
-               Log.d(Tag.LocationService.name, "Location permission is required.")
-               viewModel.revokeLocationPermission()
-           }
-       }
+        when {
+            permissionState.status.isGranted -> {
+                viewModel.grantLocationPermission()
+                showDeniedMessage = false
+                Log.d(Tag.LocationService.name, "Location permission granted.")
+            }
+
+            hasRequested -> {
+                showDeniedMessage = true
+                rationaleText = if (permissionState.status.shouldShowRationale)
+                    "Location permission is required to use core features of this app."
+                else
+                    "Location access is required to proceed."
+                viewModel.revokeLocationPermission()
+                Log.d(Tag.LocationService.name, rationaleText)
+            }
+        }
     }
 
     Scaffold { innerPadding ->
@@ -89,9 +99,19 @@ fun LocationServicesScreen(
                 )
                 Spacer(modifier = modifier.height(24.dp))
                 FilledButton(
-                    action = { permissionState.launchPermissionRequest() },
+                    action = {
+                        permissionState.launchPermissionRequest()
+                        hasRequested = true
+                    },
                     textResource = R.string.request_location_permission
                 )
+                if (showDeniedMessage) {
+                    Spacer(modifier = modifier.height(24.dp))
+                    Text(
+                        text = rationaleText,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }

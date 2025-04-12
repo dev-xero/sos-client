@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.datastore.preferences.core.edit
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -53,18 +54,34 @@ class MainActivity : ComponentActivity() {
                 }
                 val isLocationPermissionGranted by isLocationPermissionGrantedFlow
                     .collectAsState(null)
+                val isFirstLaunchFlow = remember {
+                    context.appDataStore.data.map { prefs ->
+                        prefs[PreferenceKeys.FIRST_LAUNCH_KEY] ?: true
+                    }
+                }
+                val isFirstLaunch by isFirstLaunchFlow.collectAsState(null)
+
                 val permissionState =
                     rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
                 val currentPermissionStatus = permissionState.status
+
                 var finalStartDestination by remember { mutableStateOf<NavigationRoute?>(null) }
 
-                LaunchedEffect(isLocationPermissionGranted, currentPermissionStatus) {
-                    if (isLocationPermissionGranted != null && finalStartDestination == null) {
+                LaunchedEffect(isLocationPermissionGranted, currentPermissionStatus, isFirstLaunch) {
+                    if (isFirstLaunch == true) {
+                        Log.d(Tag.MainActivity.name, "First launch, defaulting to onboarding begin.")
+
+                        context.appDataStore.edit { prefs ->
+                            prefs[PreferenceKeys.FIRST_LAUNCH_KEY] = false
+                        }
+                        finalStartDestination = NavigationRoute.OnboardingBegin
+                    } else if (isLocationPermissionGranted != null && finalStartDestination == null) {
                         Log.d(
-                            Tag.LocationService.name,
+                            Tag.MainActivity.name,
                             "App is ready. Permission granted in DS: $isLocationPermissionGranted, " +
                                     "actual status: $currentPermissionStatus"
                         )
+
                         finalStartDestination = when {
                             isLocationPermissionGranted == true
                                     && currentPermissionStatus.isGranted -> NavigationRoute.Home
@@ -77,7 +94,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                Log.d(Tag.LocationService.name, "Final start destination: $finalStartDestination")
+                Log.d(Tag.MainActivity.name, "Final start destination: $finalStartDestination")
                 splashScreen.setKeepOnScreenCondition { finalStartDestination == null }
 
                 if (finalStartDestination != null) {
@@ -91,7 +108,7 @@ class MainActivity : ComponentActivity() {
                 } else {
                     Box(modifier = Modifier.fillMaxSize())
                     Log.d(
-                        Tag.LocationService.name,
+                        Tag.MainActivity.name,
                         "App not ready yet. Displaying splash. Permission Granted in DS: $isLocationPermissionGranted"
                     )
                 }
