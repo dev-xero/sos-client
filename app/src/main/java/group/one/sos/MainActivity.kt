@@ -29,10 +29,8 @@ import group.one.sos.core.navigation.NavigationRoute
 import group.one.sos.core.utils.Tag
 import group.one.sos.data.local.preferences.PreferenceKeys
 import group.one.sos.data.local.preferences.appDataStore
-import group.one.sos.domain.usecases.OnboardingUseCase
 import group.one.sos.presentation.theme.SOSTheme
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 @OptIn(ExperimentalPermissionsApi::class)
 @AndroidEntryPoint
@@ -48,47 +46,45 @@ class MainActivity : ComponentActivity() {
             SOSTheme {
                 val navController = rememberNavController()
                 val context = LocalContext.current
-
-                var isReady by remember { mutableStateOf(false) }
-
                 val isLocationPermissionGrantedFlow = remember {
                     context.appDataStore.data.map { prefs ->
                         prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY]
                     }
                 }
-                val isLocationPermissionGranted by isLocationPermissionGrantedFlow.collectAsState(
-                    initial = null
-                )
-
+                val isLocationPermissionGranted by isLocationPermissionGrantedFlow
+                    .collectAsState(null)
                 val permissionState =
                     rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
                 val currentPermissionStatus = permissionState.status
+                var finalStartDestination by remember { mutableStateOf<NavigationRoute?>(null) }
 
-                LaunchedEffect(isLocationPermissionGranted) {
-                    if (isLocationPermissionGranted != null) {
-                        isReady = true
+                LaunchedEffect(isLocationPermissionGranted, currentPermissionStatus) {
+                    if (isLocationPermissionGranted != null && finalStartDestination == null) {
                         Log.d(
                             Tag.LocationService.name,
-                            "App is ready. Permission granted in DS: $isLocationPermissionGranted, actual status: $currentPermissionStatus"
+                            "App is ready. Permission granted in DS: $isLocationPermissionGranted, " +
+                                    "actual status: $currentPermissionStatus"
                         )
+                        finalStartDestination = when {
+                            isLocationPermissionGranted == true
+                                    && currentPermissionStatus.isGranted -> NavigationRoute.Home
+
+                            isLocationPermissionGranted == true
+                                    && !currentPermissionStatus.isGranted -> NavigationRoute.LocationPermission
+
+                            else -> NavigationRoute.OnboardingBegin
+                        }
                     }
                 }
 
-                splashScreen.setKeepOnScreenCondition { !isReady }
-                if (isReady) {
-                    val finalStartDestination =
-                        remember(currentPermissionStatus, isLocationPermissionGranted) {
-                            val hasGrantedInDataStore = isLocationPermissionGranted == true
-                            when {
-                                currentPermissionStatus.isGranted -> NavigationRoute.Home
-                                hasGrantedInDataStore -> NavigationRoute.LocationPermission
-                                else -> NavigationRoute.OnboardingBegin
-                            }
-                        }
+                Log.d(Tag.LocationService.name, "Final start destination: $finalStartDestination")
+                splashScreen.setKeepOnScreenCondition { finalStartDestination == null }
+
+                if (finalStartDestination != null) {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         NavigationGraph(
                             navController = navController,
-                            startDestination = finalStartDestination,
+                            startDestination = finalStartDestination!!,
                             modifier = Modifier.padding(innerPadding)
                         )
                     }
