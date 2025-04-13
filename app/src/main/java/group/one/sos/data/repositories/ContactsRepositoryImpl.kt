@@ -4,15 +4,16 @@ import android.content.Context
 import android.provider.ContactsContract
 import dagger.hilt.android.qualifiers.ApplicationContext
 import group.one.sos.data.models.ContactModel
+import group.one.sos.domain.contracts.ContactsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
-class ContactsRepository @Inject constructor(
+class ContactsRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) {
-    suspend fun getContacts(): List<ContactModel> = coroutineScope {
+) : ContactsRepository {
+    override suspend fun getContacts(): List<ContactModel> = coroutineScope {
         async(Dispatchers.IO) { getContactList() }.await()
     }
 
