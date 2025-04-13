@@ -10,10 +10,10 @@ import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import group.one.sos.presentation.navigation.NavigationRoute
 import group.one.sos.core.constants.Tag
+import group.one.sos.core.extensions.appDataStore
 import group.one.sos.data.local.preferences.PreferenceKeys
-import group.one.sos.data.local.preferences.appDataStore
+import group.one.sos.presentation.navigation.NavigationRoute
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first

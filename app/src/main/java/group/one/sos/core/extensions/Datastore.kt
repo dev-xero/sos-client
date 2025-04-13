@@ -1,4 +1,4 @@
-package group.one.sos.data.local.preferences
+package group.one.sos.core.extensions
 
 import android.content.Context
 import androidx.datastore.core.DataStore
