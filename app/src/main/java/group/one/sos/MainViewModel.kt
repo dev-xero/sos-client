@@ -1,6 +1,5 @@
 package group.one.sos
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.datastore.preferences.core.edit
@@ -11,7 +10,7 @@ import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import group.one.sos.core.navigation.NavigationRoute
+import group.one.sos.presentation.navigation.NavigationRoute
 import group.one.sos.core.utils.Tag
 import group.one.sos.data.local.preferences.PreferenceKeys
 import group.one.sos.data.local.preferences.appDataStore

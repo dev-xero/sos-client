@@ -1,4 +1,4 @@
-package group.one.sos.core.navigation
+package group.one.sos.presentation.navigation
 
 sealed class NavigationRoute(val route: String) {
     data object OnboardingBegin : NavigationRoute("onboarding_begin")

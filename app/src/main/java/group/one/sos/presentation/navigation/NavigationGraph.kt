@@ -1,4 +1,4 @@
-package group.one.sos.core.navigation
+package group.one.sos.presentation.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween

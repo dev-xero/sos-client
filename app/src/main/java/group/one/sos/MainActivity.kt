@@ -19,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import dagger.hilt.android.AndroidEntryPoint
-import group.one.sos.core.navigation.NavigationGraph
+import group.one.sos.presentation.navigation.NavigationGraph
 import group.one.sos.presentation.theme.SOSTheme
 
 @OptIn(ExperimentalPermissionsApi::class)
