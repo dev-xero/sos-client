@@ -3,14 +3,17 @@ package group.one.sos.presentation.navigation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import group.one.sos.presentation.screens.HomeScreen
-import group.one.sos.presentation.screens.LocationServicesScreen
-import group.one.sos.presentation.screens.OnboardingBeginScreen
+import group.one.sos.presentation.screens.home.HomeScreen
+import group.one.sos.presentation.screens.location_services.LocationServicesNavigator
+import group.one.sos.presentation.screens.location_services.LocationServicesScreen
+import group.one.sos.presentation.screens.onboarding_begin.OnboardingBeginNavigator
+import group.one.sos.presentation.screens.onboarding_begin.OnboardingBeginScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -49,22 +52,12 @@ fun NavigationGraph(
         }
     ) {
         composable(route = NavigationRoute.OnboardingBegin.route) {
-            OnboardingBeginScreen(onGetStartedClicked = {
-                navController.navigate(NavigationRoute.LocationPermission.route)
-            })
+            val navigator = remember { OnboardingBeginNavigator(navController) }
+            OnboardingBeginScreen(navigator = navigator)
         }
         composable(route = NavigationRoute.LocationPermission.route) {
-            LocationServicesScreen(
-                onBackButtonClicked = {
-                    navController.popBackStack()
-                },
-                onLocationPermissionGranted = {
-                    navController.navigate(NavigationRoute.Home.route) {
-                        popUpTo(NavigationRoute.LocationPermission.route) {
-                            inclusive = true
-                        }
-                    }
-                })
+            val navigator = remember { LocationServicesNavigator(navController) }
+            LocationServicesScreen(navigator = navigator)
         }
         composable(route = NavigationRoute.Home.route) {
             HomeScreen()

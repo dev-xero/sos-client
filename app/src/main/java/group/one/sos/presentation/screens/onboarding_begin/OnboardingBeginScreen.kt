@@ -1,4 +1,4 @@
-package group.one.sos.presentation.screens
+package group.one.sos.presentation.screens.onboarding_begin
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -15,16 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import group.one.sos.R
-import group.one.sos.presentation.theme.SOSTheme
-import group.one.sos.presentation.ui.FilledIconButton
+import group.one.sos.presentation.components.FilledIconButton
 
 @Composable
 fun OnboardingBeginScreen(
     modifier: Modifier = Modifier,
-    onGetStartedClicked: () -> Unit
+    navigator: OnboardingBeginNavigator
 ) {
     Scaffold { innerPadding ->
         Box(
@@ -46,19 +44,11 @@ fun OnboardingBeginScreen(
                 Text(text = stringResource(R.string.onboarding_text))
                 Spacer(modifier = Modifier.height(24.dp))
                 FilledIconButton(
-                    action = onGetStartedClicked,
+                    action = { navigator.navigateToLocationPermission() },
                     iconResource = R.drawable.ic_right_arrow,
                     textResource = R.string.get_started_btn
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun OnboardingScreenPreview() {
-    SOSTheme {
-        OnboardingBeginScreen(onGetStartedClicked = {})
     }
 }

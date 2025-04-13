@@ -1,4 +1,4 @@
-package group.one.sos.presentation.screens
+package group.one.sos.presentation.screens.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

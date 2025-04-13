@@ -1,4 +1,4 @@
-package group.one.sos.presentation.viewmodels
+package group.one.sos.presentation.screens.location_services
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -6,7 +6,7 @@ import group.one.sos.domain.usecases.LocationPermissionUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class LocationServiceViewModel @Inject constructor(
+class LocationServicesViewModel @Inject constructor(
     private val locationPermissionUseCase: LocationPermissionUseCase
 ) : ViewModel() {
     suspend fun grantLocationPermission() {

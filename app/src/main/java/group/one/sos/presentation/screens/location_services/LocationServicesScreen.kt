@@ -1,4 +1,4 @@
-package group.one.sos.presentation.screens
+package group.one.sos.presentation.screens.location_services
 
 import android.Manifest
 import android.content.Context
@@ -40,17 +40,15 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import group.one.sos.R
 import group.one.sos.core.utils.Tag
-import group.one.sos.presentation.ui.FilledButton
-import group.one.sos.presentation.ui.OnboardingTopBar
-import group.one.sos.presentation.viewmodels.LocationServiceViewModel
+import group.one.sos.presentation.components.FilledButton
+import group.one.sos.presentation.components.OnboardingTopBar
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationServicesScreen(
     modifier: Modifier = Modifier,
-    viewModel: LocationServiceViewModel = hiltViewModel(),
-    onBackButtonClicked: () -> Unit,
-    onLocationPermissionGranted: () -> Unit
+    viewModel: LocationServicesViewModel = hiltViewModel(),
+    navigator: LocationServicesNavigator
 ) {
     val context = LocalContext.current
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -66,7 +64,7 @@ fun LocationServicesScreen(
                 viewModel.grantLocationPermission()
                 showDeniedMessage = false
                 Log.d(Tag.LocationService.name, "Location permission granted.")
-                onLocationPermissionGranted()
+                navigator.navigateToEmergencyContacts()
             }
 
             hasRequested -> {
@@ -82,7 +80,7 @@ fun LocationServicesScreen(
     }
 
     Scaffold (
-        topBar = { OnboardingTopBar(onBackButtonClicked = onBackButtonClicked) }
+        topBar = { OnboardingTopBar(onBackButtonClicked = { navigator.navigateBack() }) }
     ) { innerPadding ->
         Box(
             modifier = modifier
@@ -143,7 +141,7 @@ fun LocationServicesScreen(
 
 private fun openAppSettings(context: Context) {
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        data = Uri.fromParts("package", context.packageName, null)
+        Intent.setData = Uri.fromParts("package", context.packageName, null)
     }
     context.startActivity(intent)
 }

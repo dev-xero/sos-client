@@ -15,7 +15,7 @@ The `presentation/` layer handles everything related to the user interface (UI),
 | `screens/`    | Screen-level Composable (each module with its own ui and ViewModels) |
 | `components/` | Reusable UI elements                                                 |
 | `navigation/` | Routes and Navigation Graphs                                         |
-| `ui/`         | Themes including app colors and typography                           |
+| `theme/`      | Themes including app colors and typography                           |
 
 ## `Guidelines`
 
