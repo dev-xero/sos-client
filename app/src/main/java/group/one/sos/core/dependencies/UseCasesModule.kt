@@ -13,7 +13,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object UseCasesModule {
-
     @Provides
     @Singleton
     fun provideOnboardingUseCase(preferencesManagerImpl: PreferencesManagerImpl): OnboardingUseCases {
@@ -25,5 +24,4 @@ object UseCasesModule {
     fun provideLocationPermissionUseCase(preferencesManager: PreferencesManager) : LocationPermissionUseCases {
         return LocationPermissionUseCases(preferencesManager)
     }
-
 }

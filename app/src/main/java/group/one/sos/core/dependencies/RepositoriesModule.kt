@@ -13,11 +13,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoriesModule {
-
     @Provides
     @Singleton
     fun providesContactsRepository(@ApplicationContext context: Context): ContactsRepository {
         return ContactsRepositoryImpl(context)
     }
-
 }
