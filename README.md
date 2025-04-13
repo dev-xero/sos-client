@@ -1,4 +1,4 @@
-<image src="https://github.com/user-attachments/assets/26138ac1-055e-4792-a49c-8c27a0a0b3a5" width="100px" align="left" />
+<image src="./docs/assets/sos.svg" width="100px" align="left" />
 
 ### `SOS`
 
