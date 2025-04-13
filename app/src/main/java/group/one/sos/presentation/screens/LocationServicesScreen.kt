@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -40,6 +41,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 import group.one.sos.R
 import group.one.sos.core.utils.Tag
 import group.one.sos.presentation.ui.FilledButton
+import group.one.sos.presentation.ui.OnboardingTopBar
 import group.one.sos.presentation.viewmodels.LocationServiceViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -47,6 +49,7 @@ import group.one.sos.presentation.viewmodels.LocationServiceViewModel
 fun LocationServicesScreen(
     modifier: Modifier = Modifier,
     viewModel: LocationServiceViewModel = hiltViewModel(),
+    onBackButtonClicked: () -> Unit,
     onLocationPermissionGranted: () -> Unit
 ) {
     val context = LocalContext.current
@@ -54,7 +57,7 @@ fun LocationServicesScreen(
     var hasRequested by remember { mutableStateOf(false) }
     var rationaleText by remember { mutableStateOf("") }
     var showDeniedMessage by remember { mutableStateOf(false) }
-    val wasDeniedPermission by remember { derivedStateOf { !permissionState.status.isGranted } }
+    val wasDeniedPermission by remember { derivedStateOf { showDeniedMessage && !permissionState.status.isGranted } }
 
     // Observe whenever permission state changes
     LaunchedEffect(permissionState.status) {
@@ -78,7 +81,9 @@ fun LocationServicesScreen(
         }
     }
 
-    Scaffold { innerPadding ->
+    Scaffold (
+        topBar = { OnboardingTopBar(onBackButtonClicked = onBackButtonClicked) }
+    ) { innerPadding ->
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -125,17 +130,10 @@ fun LocationServicesScreen(
                 if (showDeniedMessage) {
                     Spacer(modifier = modifier.height(24.dp))
                     Text(
-                        text = rationaleText,
+                        text = rationaleText + " " + stringResource(R.string.enable_location_permission_in_settings),
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-                if (wasDeniedPermission) {
-                    Spacer(modifier = modifier.height(24.dp))
-                    Text(
-                        text = stringResource(R.string.enable_location_permission_in_settings),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodySmall,
+                        lineHeight = 18.sp
                     )
                 }
             }
