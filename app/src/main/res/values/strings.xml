@@ -5,4 +5,6 @@
     <string name="location_services">Location Services</string>
     <string name="location_services_desc">SOS needs access to your location to send help to the right place in an emergency</string>
     <string name="request_location_permission">Request Permission</string>
+    <string name="location_to_settings">Enable in settings</string>
+    <string name="enable_location_permission_in_settings">Please enable location permission in settings</string>
 </resources>

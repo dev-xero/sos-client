@@ -1,6 +1,10 @@
 package group.one.sos.presentation.screens
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -16,12 +20,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -41,11 +47,14 @@ import group.one.sos.presentation.viewmodels.LocationServiceViewModel
 fun LocationServicesScreen(
     modifier: Modifier = Modifier,
     viewModel: LocationServiceViewModel = hiltViewModel(),
+    onLocationPermissionGranted: () -> Unit
 ) {
+    val context = LocalContext.current
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     var hasRequested by remember { mutableStateOf(false) }
     var rationaleText by remember { mutableStateOf("") }
     var showDeniedMessage by remember { mutableStateOf(false) }
+    val wasDeniedPermission by remember { derivedStateOf { !permissionState.status.isGranted } }
 
     // Observe whenever permission state changes
     LaunchedEffect(permissionState.status) {
@@ -54,6 +63,7 @@ fun LocationServicesScreen(
                 viewModel.grantLocationPermission()
                 showDeniedMessage = false
                 Log.d(Tag.LocationService.name, "Location permission granted.")
+                onLocationPermissionGranted()
             }
 
             hasRequested -> {
@@ -100,19 +110,42 @@ fun LocationServicesScreen(
                 Spacer(modifier = modifier.height(24.dp))
                 FilledButton(
                     action = {
-                        permissionState.launchPermissionRequest()
-                        hasRequested = true
+                        if (wasDeniedPermission) {
+                             openAppSettings(context)
+                        } else {
+                            showDeniedMessage = false
+                            permissionState.launchPermissionRequest()
+                            hasRequested = true
+                        }
                     },
-                    textResource = R.string.request_location_permission
+                    textResource = if (wasDeniedPermission) R.string.location_to_settings
+                        else R.string.request_location_permission
+
                 )
                 if (showDeniedMessage) {
                     Spacer(modifier = modifier.height(24.dp))
                     Text(
                         text = rationaleText,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                if (wasDeniedPermission) {
+                    Spacer(modifier = modifier.height(24.dp))
+                    Text(
+                        text = stringResource(R.string.enable_location_permission_in_settings),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
         }
     }
+}
+
+private fun openAppSettings(context: Context) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        data = Uri.fromParts("package", context.packageName, null)
+    }
+    context.startActivity(intent)
 }

@@ -54,7 +54,13 @@ fun NavigationGraph(
             })
         }
         composable(route = NavigationRoute.LocationPermission.route) {
-            LocationServicesScreen()
+            LocationServicesScreen(onLocationPermissionGranted = {
+                navController.navigate(NavigationRoute.Home.route) {
+                    popUpTo(NavigationRoute.LocationPermission.route) {
+                        inclusive = true
+                    }
+                }
+            })
         }
         composable(route = NavigationRoute.Home.route) {
             HomeScreen()
