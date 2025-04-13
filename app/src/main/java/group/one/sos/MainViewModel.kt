@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-     @ApplicationContext context: Context
+    @ApplicationContext context: Context
 ) : ViewModel() {
     private val dataStore = context.appDataStore
 
@@ -38,6 +38,7 @@ class MainViewModel @Inject constructor(
             val prefs = dataStore.data.first()
             val isFirstLaunch = prefs[PreferenceKeys.FIRST_LAUNCH_KEY] ?: true
             val isPermissionGrantedInDS = prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY]
+            val emergencyContact = prefs[PreferenceKeys.EMERGENCY_CONTACT_KEY] ?: ""
 
             if (isFirstLaunch) {
                 Log.d(Tag.MainActivity.name, "First launch, start destination is onboarding")
@@ -45,11 +46,14 @@ class MainViewModel @Inject constructor(
                 _startDestination.value = NavigationRoute.OnboardingBegin
             } else {
                 _startDestination.value = when {
-                    isPermissionGrantedInDS == true && permissionStatus.isGranted ->
-                        NavigationRoute.Home
-
                     isPermissionGrantedInDS == true && !permissionStatus.isGranted ->
                         NavigationRoute.LocationPermission
+
+                    emergencyContact.isEmpty() ->
+                        NavigationRoute.EmergencyContacts
+
+                    isPermissionGrantedInDS == true && permissionStatus.isGranted && emergencyContact.isNotEmpty() ->
+                        NavigationRoute.Home
 
                     else -> NavigationRoute.OnboardingBegin
                 }

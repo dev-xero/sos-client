@@ -7,4 +7,6 @@
     <string name="request_location_permission">Request Permission</string>
     <string name="location_to_settings">Enable in settings</string>
     <string name="enable_location_permission_in_settings">Please enable it in settings</string>
+    <string name="add_emergency_contact">Add Emergency Contact</string>
+    <string name="add_emergency_contact_desc">Add at least one emergency contact who will be notified in case of an emergency</string>
 </resources>
