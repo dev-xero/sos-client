@@ -11,7 +11,7 @@ import com.google.accompanist.permissions.isGranted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import group.one.sos.presentation.navigation.NavigationRoute
-import group.one.sos.core.utils.Tag
+import group.one.sos.core.constants.Tag
 import group.one.sos.data.local.preferences.PreferenceKeys
 import group.one.sos.data.local.preferences.appDataStore
 import kotlinx.coroutines.flow.MutableStateFlow

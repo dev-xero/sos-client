@@ -1,20 +1,16 @@
 package group.one.sos.data.services
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import group.one.sos.domain.contracts.UserLocationService
 
-class LocationService(
-    private val context: Context,
+class UserLocationServiceImpl(
     private val fusedLocationClient: FusedLocationProviderClient
-) {
+) : UserLocationService {
     @SuppressLint("MissingPermission")
-    fun getCurrentLocation(
+    override fun getCurrentLocation(
         cancellationToken: CancellationTokenSource,
         onSuccess: (Double, Double) -> Unit,
         onFailure: (Exception) -> Unit
@@ -26,13 +22,5 @@ class LocationService(
                 else onFailure(Exception("Location is null"))
             }
             .addOnFailureListener { ex -> onFailure(ex) }
-    }
-
-    fun openAppSettings() {
-        val intent = Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", context.packageName, null)
-        )
-        context.startActivity(intent)
     }
 }

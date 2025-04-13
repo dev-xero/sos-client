@@ -1,6 +1,6 @@
 package group.one.sos.domain.usecases
 
-import group.one.sos.data.local.preferences.PreferenceManager
+import group.one.sos.domain.contracts.PreferencesManager
 import javax.inject.Inject
 
 /**
@@ -9,12 +9,12 @@ import javax.inject.Inject
  * Business logic functions to granting and revoking location permissions.
  * These are stored in preferences datastore managed by the preference manager.
  */
-class LocationPermissionUseCase @Inject constructor(private val preferenceManager: PreferenceManager){
+class LocationPermissionUseCases @Inject constructor(private val preferencesManager: PreferencesManager){
     suspend fun grantLocationPermission() {
-        preferenceManager.grantLocationPermission()
+        preferencesManager.grantLocationPermission()
     }
 
     suspend fun revokeLocationPermission() {
-        preferenceManager.revokeLocationPermission();
+        preferencesManager.revokeLocationPermission()
     }
 }

@@ -2,11 +2,14 @@
     <string name="app_name">SOS</string>
     <string name="onboarding_text">Instant alerts to the nearest emergency responders with just a click</string>
     <string name="get_started_btn">Get Started</string>
+
+    <string name="request_permission">Request Permission</string>
+    <string name="enable_permission_in_settings">Please enable it in settings</string>
+    <string name="enable_in_settings">Enable in settings</string>
+
     <string name="location_services">Location Services</string>
     <string name="location_services_desc">SOS needs access to your location to send help to the right place in an emergency</string>
-    <string name="request_location_permission">Request Permission</string>
-    <string name="location_to_settings">Enable in settings</string>
-    <string name="enable_location_permission_in_settings">Please enable it in settings</string>
+
     <string name="add_emergency_contact">Add Emergency Contact</string>
     <string name="add_emergency_contact_desc">Add at least one emergency contact who will be notified in case of an emergency</string>
 </resources>

@@ -1,7 +1,6 @@
-package group.one.sos.core.di
+package group.one.sos.core.dependencies
 
 import android.content.Context
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,10 +12,12 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ContactsModule {
+object RepositoriesModule {
+
     @Provides
     @Singleton
     fun providesContactsRepository(@ApplicationContext context: Context): ContactsRepository {
         return ContactsRepositoryImpl(context)
     }
+
 }

@@ -1,6 +1,6 @@
 package group.one.sos.domain.usecases
 
-import group.one.sos.data.local.preferences.PreferenceManager
+import group.one.sos.domain.contracts.PreferencesManager
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -10,12 +10,12 @@ import javax.inject.Inject
  * Provides business logic functions for onboarding, most of which are
  * wrappers around the preference manager to prevent direct access
  */
-class OnboardingUseCase @Inject constructor(private val preferenceManager: PreferenceManager) {
+class OnboardingUseCases @Inject constructor(private val preferencesManager: PreferencesManager) {
     fun isOnboardingCompleted(): Flow<Boolean> {
-        return preferenceManager.isOnboardingCompleted()
+        return preferencesManager.isOnboardingCompleted()
     }
 
     suspend fun completeOnboarding() {
-        preferenceManager.completeOnboarding()
+        preferencesManager.completeOnboarding()
     }
 }

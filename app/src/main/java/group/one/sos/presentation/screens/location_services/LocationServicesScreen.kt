@@ -1,10 +1,6 @@
 package group.one.sos.presentation.screens.location_services
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +35,8 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import group.one.sos.R
-import group.one.sos.core.utils.Tag
+import group.one.sos.core.constants.Tag
+import group.one.sos.core.utils.openAppSettings
 import group.one.sos.presentation.components.FilledButton
 import group.one.sos.presentation.components.OnboardingTopBar
 
@@ -121,14 +118,14 @@ fun LocationServicesScreen(
                             hasRequested = true
                         }
                     },
-                    textResource = if (wasDeniedPermission) R.string.location_to_settings
-                        else R.string.request_location_permission
+                    textResource = if (wasDeniedPermission) R.string.enable_in_settings
+                        else R.string.request_permission
 
                 )
                 if (showDeniedMessage) {
                     Spacer(modifier = modifier.height(24.dp))
                     Text(
-                        text = rationaleText + " " + stringResource(R.string.enable_location_permission_in_settings),
+                        text = rationaleText + " " + stringResource(R.string.enable_permission_in_settings),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall,
                         lineHeight = 18.sp
@@ -137,11 +134,4 @@ fun LocationServicesScreen(
             }
         }
     }
-}
-
-private fun openAppSettings(context: Context) {
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        data = Uri.fromParts("package", context.packageName, null)
-    }
-    context.startActivity(intent)
 }
