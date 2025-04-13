@@ -1,7 +1,7 @@
 package group.one.sos.domain.usecases
 
-import group.one.sos.data.models.ContactModel
 import group.one.sos.domain.contracts.ContactsRepository
+import group.one.sos.domain.models.ContactModel
 import javax.inject.Inject
 
 class EmergencyContactUseCases @Inject constructor(

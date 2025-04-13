@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -43,15 +45,19 @@ fun EmergencyContactsScreen(
     navigator: EmergencyContactsNavigator
 ) {
     val context = LocalContext.current
+    val viewModel: EmergencyContactsViewModel = hiltViewModel()
     val permissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
+
     var hasRequested by remember { mutableStateOf(false) }
     var wasDeniedPermission by remember { mutableStateOf(false) }
     var rationaleText by remember { mutableStateOf("") }
 
+    val contactsList = viewModel.contactsList.collectAsState()
+
     LaunchedEffect(permissionState.status) {
         when {
             permissionState.status.isGranted -> {
-                // TODO: view model should now attempt to read contacts
+                viewModel.loadContactsList()
             }
 
             hasRequested -> {
@@ -63,6 +69,10 @@ fun EmergencyContactsScreen(
                 Log.d(Tag.EmergencyContact.name, rationaleText)
             }
         }
+    }
+
+    LaunchedEffect(viewModel.contactsList) {
+        Log.d(Tag.EmergencyContact.name, "contacts list loaded.")
     }
 
     Scaffold { innerPadding ->
@@ -89,7 +99,7 @@ fun EmergencyContactsScreen(
                     text = stringResource(R.string.add_emergency_contact_desc),
                 )
                 Spacer(modifier = modifier.height(24.dp))
-                if (!hasRequested || wasDeniedPermission) {
+                if (contactsList.value == null && !hasRequested || wasDeniedPermission) {
                     FilledButton(
                         action = {
                             if (wasDeniedPermission) {
@@ -114,9 +124,11 @@ fun EmergencyContactsScreen(
                         )
                     }
                 } else {
-                    // By this time the view model would've already fetched the contacts
-                    // list, else we just show a spinner
-                    SpinnerFragment()
+                    if (contactsList.value == null) {
+                        SpinnerFragment()
+                    } else {
+                        Text("here it is!!")
+                    }
                 }
             }
         }

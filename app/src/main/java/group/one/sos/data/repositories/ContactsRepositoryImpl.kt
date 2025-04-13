@@ -2,9 +2,10 @@ package group.one.sos.data.repositories
 
 import android.content.Context
 import android.provider.ContactsContract
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import group.one.sos.data.models.ContactModel
 import group.one.sos.domain.contracts.ContactsRepository
+import group.one.sos.domain.models.ContactModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -39,12 +40,19 @@ class ContactsRepositoryImpl @Inject constructor(
             val photoThumbIndex =
                 contactsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI)
 
+            if (idIndex == -1 || nameIndex == -1 || numberIndex == -1) {
+                Log.e("ContactsRepository", "Missing required columns in contactsCursor")
+                return emptyList()
+            }
+
             while (contactsCursor.moveToNext()) {
                 val id = contactsCursor.getString(idIndex)
                 val name = contactsCursor.getString(nameIndex)
                 val number = contactsCursor.getString(numberIndex)
-                val photoURI = contactsCursor.getString(photoURIIndex)
-                val photoThumb = contactsCursor.getString(photoThumbIndex)
+                val photoURI =
+                    if (photoURIIndex != -1) contactsCursor.getString(photoURIIndex) else null
+                val photoThumb =
+                    if (photoThumbIndex != -1) contactsCursor.getString(photoThumbIndex) else null
 
                 contactsList.add(
                     ContactModel(
