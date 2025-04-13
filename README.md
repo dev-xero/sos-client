@@ -1,12 +1,10 @@
+<image src="https://github.com/user-attachments/assets/26138ac1-055e-4792-a49c-8c27a0a0b3a5" width="100px" align="left" />
 
-<p align="center">
-  <image src="https://github.com/user-attachments/assets/d56c8eaa-ab3d-40bf-9e78-f20c77fd8a57"/>
-</p>
+### `SOS`
 
-
-![Kotlin](https://img.shields.io/badge/Kotlin-1.9-purple?logo=kotlin&style=for-the-badge&colorA=131820&colorB=FFFFFF)
-![](https://img.shields.io/badge/Jetpack%20Compose-UI-blue?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=android)
-![](https://img.shields.io/github/license/dev-xero/sos-client?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=github)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9-purple?logo=kotlin&style=for-the-badge&colorA=131820&colorB=FFFFFF)]("https://github.com/dev-xero/sos-client")
+[![Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-blue?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=android)]("https://github.com/dev-xero/sos-client")
+[![License](https://img.shields.io/github/license/dev-xero/sos-client?style=for-the-badge&colorA=131820&colorB=FFFFFF&logo=github)]("https://github.com/dev-xero/sos-client")
 
 The SOS client is a Kotlin-based Android app for an **Emergency Response System (ERS)** that can quickly alert emergency services with a single tap. It shares the user’s real-time location and notifies configured contacts instantly.
 
@@ -67,8 +65,8 @@ cd sos-client
 
 ### Run
 
-1. Open the project in Anrdoid Studio
-2. Connect your Anroid device or emulator
+1. Open the project in Android Studio
+2. Connect your Android device or emulator
 3. Click Run or F10
 
 ## Libraries
@@ -79,6 +77,8 @@ cd sos-client
 - Dagger Hilt for dependency injection
 - Compose Navigation
 - Datastore preferences for app preferences
+- Google Play Location API services
+- Google Accompanist for api compatibility
 
 ## Technical Stack
 
