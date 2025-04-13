@@ -36,13 +36,13 @@ class MainViewModel @Inject constructor(
     fun initialize(permissionStatus: PermissionStatus) {
         viewModelScope.launch {
             val prefs = dataStore.data.first()
-            val isFirstLaunch = prefs[PreferenceKeys.FIRST_LAUNCH_KEY] ?: true
-            val isPermissionGrantedInDS = prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY]
-            val emergencyContact = prefs[PreferenceKeys.EMERGENCY_CONTACT_KEY] ?: ""
+            val isFirstLaunch = prefs[PreferenceKeys.IS_FIRST_LAUNCH] ?: true
+            val isPermissionGrantedInDS = prefs[PreferenceKeys.IS_LOCATION_PERMISSION_GRANTED]
+            val emergencyContact = prefs[PreferenceKeys.EMERGENCY_CONTACT] ?: ""
 
             if (isFirstLaunch) {
                 Log.d(Tag.MainActivity.name, "First launch, start destination is onboarding")
-                dataStore.edit { it[PreferenceKeys.FIRST_LAUNCH_KEY] = false }
+                dataStore.edit { it[PreferenceKeys.IS_FIRST_LAUNCH] = false }
                 _startDestination.value = NavigationRoute.OnboardingBegin
             } else {
                 _startDestination.value = when {

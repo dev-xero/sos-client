@@ -20,29 +20,29 @@ import javax.inject.Singleton
 class PreferencesManagerImpl @Inject constructor(private val context: Context) : PreferencesManager {
     override fun isOnboardingCompleted(): Flow<Boolean> {
         val isCompleted =
-            context.appDataStore.data.map { prefs -> prefs[PreferenceKeys.ONBOARDING_KEY] == true }
+            context.appDataStore.data.map { prefs -> prefs[PreferenceKeys.IS_ONBOARDING_COMPLETED] == true }
         return isCompleted
     }
 
     override suspend fun completeOnboarding() {
-        context.appDataStore.edit { prefs -> prefs[PreferenceKeys.ONBOARDING_KEY] = true }
+        context.appDataStore.edit { prefs -> prefs[PreferenceKeys.IS_ONBOARDING_COMPLETED] = true }
     }
 
     override fun isLocationPermissionGranted(): Flow<Boolean> {
         val isGranted =
-            context.appDataStore.data.map { prefs -> prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY] == true }
+            context.appDataStore.data.map { prefs -> prefs[PreferenceKeys.IS_LOCATION_PERMISSION_GRANTED] == true }
         return isGranted
     }
 
     override suspend fun grantLocationPermission() {
         context.appDataStore.edit { prefs ->
-            prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY] = true
+            prefs[PreferenceKeys.IS_LOCATION_PERMISSION_GRANTED] = true
         }
     }
 
     override suspend fun revokeLocationPermission() {
         context.appDataStore.edit { prefs ->
-            prefs[PreferenceKeys.LOCATION_PERMISSION_GRANTED_KEY] = false
+            prefs[PreferenceKeys.IS_LOCATION_PERMISSION_GRANTED] = false
         }
     }
 }
