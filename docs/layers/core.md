@@ -17,3 +17,9 @@ The `core/` module contains low-level utilities and abstractions shared across o
 | `contants/`   | App-wide constants                                       |
 | `extensions/` | Kotlin extension functions                               |
 | `exceptions/` | Custom exceptions (e.g HTTP)                             |
+
+
+## `Guidelines`
+
+- Keep this layer **light weight and generic**
+- Do not include framework or android specific implementations.
