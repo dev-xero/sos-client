@@ -89,6 +89,10 @@ cd sos-client
 | CI/CD     | GitHub Actions                      |
 | Infra     | Docker, AWS                         |
 
+## Contributing
+
+Before contributing, read the contents of the `docs/` folder and familarize yourself with the project structure.
+
 ## Contributors
 
 - [Elochukwu Okafor (Team Lead)](https://github.com/dev-xero)
