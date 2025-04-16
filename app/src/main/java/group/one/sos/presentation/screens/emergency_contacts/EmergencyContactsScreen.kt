@@ -6,11 +6,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,6 +40,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 import group.one.sos.R
 import group.one.sos.core.constants.Tag
 import group.one.sos.core.utils.openAppSettings
+import group.one.sos.presentation.components.ContactPill
 import group.one.sos.presentation.components.FilledButton
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -132,15 +131,15 @@ fun EmergencyContactsScreen(
                         }
                     }
                     is UiState.LoadedContactsList -> {
-                        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxHeight(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
                             items(contactsList!!) { contact ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(contact.displayName)
-                                    Text(contact.phoneNumber)
-                                }
+                                ContactPill(
+                                    displayName = contact.displayName,
+                                    phoneNumber = contact.phoneNumber
+                                )
                             }
                         }
                     }
