@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -139,9 +138,10 @@ private fun PermissionMissingFragment(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxWidth()
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
     ) {
+        IntroFragment()
         FilledButton(
             action = onRequestPermission,
             textResource = if (wasDeniedPermission)
@@ -150,6 +150,7 @@ private fun PermissionMissingFragment(
                 R.string.request_permission
         )
         if (wasDeniedPermission) {
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "$rationaleText ${stringResource(R.string.enable_permission_in_settings)}",
                 textAlign = TextAlign.Center,
@@ -163,26 +164,7 @@ private fun PermissionMissingFragment(
 @Composable
 private fun ContactsListFragment(contactsList: List<ContactModel>) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(R.drawable.ic_contacts),
-            contentDescription = null,
-            modifier = Modifier.size(80.dp)
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.add_emergency_contact),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(text = stringResource(R.string.add_emergency_contact_desc))
-
-        Spacer(modifier = Modifier.height(24.dp))
-
+        IntroFragment(shouldShowIcon = false)
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxHeight()
@@ -195,4 +177,31 @@ private fun ContactsListFragment(contactsList: List<ContactModel>) {
             }
         }
     }
+}
+
+@Composable
+private fun IntroFragment(
+    modifier: Modifier = Modifier,
+    shouldShowIcon: Boolean = true
+) {
+    if (shouldShowIcon) {
+        Image(
+            painter = painterResource(R.drawable.ic_contacts),
+            contentDescription = null,
+            modifier = modifier.size(80.dp)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+    Text(
+        text = stringResource(R.string.add_emergency_contact),
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.primary,
+        textAlign = if (shouldShowIcon) TextAlign.Center else TextAlign.Start
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = stringResource(R.string.add_emergency_contact_desc),
+        textAlign = if (shouldShowIcon) TextAlign.Center else TextAlign.Start
+    )
+    Spacer(modifier = Modifier.height(24.dp))
 }
