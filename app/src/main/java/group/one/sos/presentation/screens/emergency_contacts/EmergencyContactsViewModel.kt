@@ -27,7 +27,7 @@ sealed class UiState {
 @HiltViewModel
 class EmergencyContactsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val emergencyContactsUseCases: EmergencyContactUseCases
+    private val emergencyContactsUseCases: EmergencyContactUseCases,
 ) : ViewModel() {
     private val dataStore = context.appDataStore
 
@@ -37,17 +37,16 @@ class EmergencyContactsViewModel @Inject constructor(
     private val _contactsList = MutableStateFlow<List<ContactModel>>(emptyList())
     val contactsList: StateFlow<List<ContactModel>?> = _contactsList
 
-    init {
-        determineUIState()
-    }
+    private var hasLoadedContacts = false
 
-    fun determineUIState() {
+    fun determineUiState() {
         viewModelScope.launch {
             val store = dataStore.data.first()
             val isContactsPermissionGranted =
                 store[PreferenceKeys.IS_CONTACTS_PERMISSION_GRANTED] ?: false
 
             Log.d(Tag.EmergencyContact.name, "is permission granted: $isContactsPermissionGranted")
+
             if (!isContactsPermissionGranted) {
                 _uiState.value = UiState.PermissionMissing
             } else {
@@ -57,9 +56,12 @@ class EmergencyContactsViewModel @Inject constructor(
     }
 
     fun loadContactsList() {
+        if(hasLoadedContacts) return
+
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             _contactsList.value = emergencyContactsUseCases.getContactList()
+            hasLoadedContacts = true
             _uiState.value = UiState.LoadedContactsList
         }
     }
@@ -69,8 +71,7 @@ class EmergencyContactsViewModel @Inject constructor(
             dataStore.edit { store ->
                 store[PreferenceKeys.IS_CONTACTS_PERMISSION_GRANTED] = true
             }
-            _uiState.value = UiState.Loading
-            loadContactsList()
+            determineUiState()
         }
     }
 
