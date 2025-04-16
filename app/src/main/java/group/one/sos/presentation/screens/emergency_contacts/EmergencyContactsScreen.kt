@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -40,6 +42,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 import group.one.sos.R
 import group.one.sos.core.constants.Tag
 import group.one.sos.core.utils.openAppSettings
+import group.one.sos.domain.models.ContactModel
 import group.one.sos.presentation.components.ContactPill
 import group.one.sos.presentation.components.FilledButton
 
@@ -60,6 +63,7 @@ fun EmergencyContactsScreen(
     val uiState by viewModel.uiState.collectAsState()
     val contactsList by viewModel.contactsList.collectAsState()
 
+    // Permission state side effects
     LaunchedEffect(permissionState.status) {
         when {
             permissionState.status.isGranted -> {
@@ -77,6 +81,7 @@ fun EmergencyContactsScreen(
         }
     }
 
+    // Decide on initial ui fragment
     LaunchedEffect(Unit) {
         if (uiState == UiState.Loading) {
             viewModel.determineUiState()
@@ -90,81 +95,104 @@ fun EmergencyContactsScreen(
                 .padding(innerPadding)
                 .padding(12.dp)
         ) {
-            Column {
-                Image(
-                    painter = painterResource(R.drawable.ic_contacts),
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp)
-                )
-                Spacer(modifier = modifier.height(24.dp))
+           when (uiState)  {
+               UiState.Loading -> {
+                   SpinnerFragment()
+               }
 
-                Text(
-                    text = stringResource(R.string.add_emergency_contact),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(modifier = modifier.height(12.dp))
+               UiState.PermissionMissing -> {
+                   PermissionMissingFragment(
+                       wasDeniedPermission = wasDeniedPermission,
+                       rationaleText = rationaleText,
+                       onRequestPermission = {
+                           if (wasDeniedPermission) {
+                               openAppSettings(context)
+                           } else {
+                               wasDeniedPermission = false
+                               permissionState.launchPermissionRequest()
+                               hasRequested = true
+                           }
+                       }
+                   )
+               }
 
-                Text(
-                    text = stringResource(R.string.add_emergency_contact_desc),
-                )
-                Spacer(modifier = modifier.height(24.dp))
-
-                when (uiState) {
-                    is UiState.PermissionMissing -> {
-                        FilledButton(
-                            action = {
-                                if (wasDeniedPermission) {
-                                    openAppSettings(context)
-                                } else {
-                                    wasDeniedPermission = false
-                                    permissionState.launchPermissionRequest()
-                                    hasRequested = true
-                                }
-                            },
-                            textResource = if (wasDeniedPermission) R.string.enable_in_settings
-                            else R.string.request_permission
-
-                        )
-                        if (wasDeniedPermission) {
-                            Spacer(modifier = modifier.height(24.dp))
-                            Text(
-                                text = rationaleText + " " + stringResource(R.string.enable_permission_in_settings),
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodySmall,
-                                lineHeight = 18.sp
-                            )
-                        }
-                    }
-                    is UiState.LoadedContactsList -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxHeight(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(contactsList!!) { contact ->
-                                ContactPill(
-                                    displayName = contact.displayName,
-                                    phoneNumber = contact.phoneNumber
-                                )
-                            }
-                        }
-                    }
-                    is UiState.Loading -> {
-                        SpinnerFragment()
-                    }
-                }
-            }
+               UiState.LoadedContactsList -> {
+                   ContactsListFragment(contactsList = contactsList ?: emptyList())
+               }
+           }
         }
     }
 }
 
 @Composable
-private fun SpinnerFragment(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
+private fun SpinnerFragment(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun PermissionMissingFragment(
+    wasDeniedPermission: Boolean,
+    rationaleText: String,
+    onRequestPermission: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        FilledButton(
+            action = onRequestPermission,
+            textResource = if (wasDeniedPermission)
+                R.string.enable_in_settings
+            else
+                R.string.request_permission
+        )
+        if (wasDeniedPermission) {
+            Text(
+                text = "$rationaleText ${stringResource(R.string.enable_permission_in_settings)}",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+                lineHeight = 18.sp
+            )
+        }
+    }
+}
+
+@Composable
+private fun ContactsListFragment(contactsList: List<ContactModel>) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(R.drawable.ic_contacts),
+            contentDescription = null,
+            modifier = Modifier.size(80.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = stringResource(R.string.add_emergency_contact),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(text = stringResource(R.string.add_emergency_contact_desc))
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxHeight()
+        ){
+            items(contactsList) { contact ->
+                ContactPill(
+                    displayName = contact.displayName,
+                    phoneNumber = contact.phoneNumber
+                )
+            }
+        }
     }
 }
