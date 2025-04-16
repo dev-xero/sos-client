@@ -22,7 +22,9 @@ class ContactsRepositoryImpl @Inject constructor(
     // photo URI from the `Phone.CONTENT_URI`
     private fun getContactList(): List<ContactModel> {
         val contactsList = mutableListOf<ContactModel>()
-        context.contentResolver.query(
+        val phoneNumberSet = HashSet<String>()
+
+        context.contentResolver?.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
             null,
             null,
@@ -54,18 +56,28 @@ class ContactsRepositoryImpl @Inject constructor(
                 val photoThumb =
                     if (photoThumbIndex != -1) contactsCursor.getString(photoThumbIndex) else null
 
-                contactsList.add(
-                    ContactModel(
-                        id = id,
-                        displayName = name,
-                        phoneNumber = number,
-                        photoURI = photoURI,
-                        photoThumbURI = photoThumb
+                // The resolver may return duplicate contacts, so we maintain a set to prevent it
+                val normalizedNumber = normalizePhoneNumber(number)
+                if (normalizedNumber.isNotEmpty() && !phoneNumberSet.contains(normalizedNumber)) {
+                    phoneNumberSet.add(normalizedNumber)
+                    contactsList.add(
+                        ContactModel(
+                            id = id,
+                            displayName = name,
+                            phoneNumber = number,
+                            photoURI = photoURI,
+                            photoThumbURI = photoThumb
+                        )
                     )
-                )
+                }
             }
         }
 
         return contactsList
     }
+}
+
+// Strip out non-digit parts from the phone number
+private fun normalizePhoneNumber(number: String): String {
+    return number.replace(Regex("[^\\d+]"), "")
 }

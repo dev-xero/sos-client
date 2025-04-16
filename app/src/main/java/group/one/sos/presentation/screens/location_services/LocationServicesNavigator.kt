@@ -10,7 +10,7 @@ class LocationServicesNavigator(private val navController : NavHostController) {
 
     fun navigateToEmergencyContacts() {
         navController.navigate(NavigationRoute.EmergencyContacts.route) {
-            popUpTo(NavigationRoute.LocationPermission.route) {
+            popUpTo(NavigationRoute.EmergencyContacts.route) {
                 inclusive = true
             }
         }
