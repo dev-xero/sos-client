@@ -14,15 +14,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,24 +49,31 @@ import group.one.sos.core.utils.openAppSettings
 import group.one.sos.domain.models.ContactModel
 import group.one.sos.presentation.components.FilledButton
 import group.one.sos.presentation.screens.emergency_contacts.ui.ContactPill
+import group.one.sos.presentation.theme.Maroon
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun EmergencyContactsScreen(
     modifier: Modifier = Modifier,
     navigator: EmergencyContactsNavigator
 ) {
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val viewModel: EmergencyContactsViewModel = hiltViewModel()
-    val permissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
 
+    val permissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
     var hasRequested by remember { mutableStateOf(false) }
     var wasDeniedPermission by remember { mutableStateOf(false) }
     var rationaleText by remember { mutableStateOf("") }
 
+    var shouldShowBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
     val searchTerm by viewModel.searchTerm.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
     val contacts = viewModel.contactsList.collectAsLazyPagingItems()
+    val selectedContact = viewModel.selectedContact.collectAsState()
 
     // Permission state side effects
     LaunchedEffect(permissionState.status) {
@@ -89,34 +100,80 @@ fun EmergencyContactsScreen(
                 .padding(innerPadding)
                 .padding(12.dp)
         ) {
-           when (uiState)  {
-               UiState.Loading -> {
-                   SpinnerView()
-               }
+            when (uiState) {
+                UiState.Loading -> {
+                    SpinnerView()
+                }
 
-               UiState.PermissionMissing -> {
-                   PermissionMissingView(
-                       wasDeniedPermission = wasDeniedPermission,
-                       rationaleText = rationaleText,
-                       onRequestPermission = {
-                           if (wasDeniedPermission) {
-                               openAppSettings(context)
-                           } else {
-                               wasDeniedPermission = false
-                               permissionState.launchPermissionRequest()
-                               hasRequested = true
-                           }
-                       }
-                   )
-               }
+                UiState.PermissionMissing -> {
+                    PermissionMissingView(
+                        wasDeniedPermission = wasDeniedPermission,
+                        rationaleText = rationaleText,
+                        onRequestPermission = {
+                            if (wasDeniedPermission) {
+                                openAppSettings(context)
+                            } else {
+                                wasDeniedPermission = false
+                                permissionState.launchPermissionRequest()
+                                hasRequested = true
+                            }
+                        }
+                    )
+                }
 
-               UiState.LoadedContactsList -> {
-                   ContactsListView(
-                       contacts = contacts,
-                       viewModel = viewModel
-                   )
-               }
-           }
+                UiState.LoadedContactsList -> {
+                    ContactsListView(
+                        contacts = contacts,
+                        viewModel = viewModel,
+                        showBottomSheet = { shouldShowBottomSheet = true }
+                    )
+                }
+            }
+        }
+
+        // Bottom sheet to select/deselect emergency contact
+        if (shouldShowBottomSheet && selectedContact.value != null) {
+            ModalBottomSheet(
+                onDismissRequest = { shouldShowBottomSheet = false },
+                sheetState = sheetState,
+                containerColor = Maroon
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        text = stringResource(R.string.add_this_number),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = selectedContact.value!!.displayName,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = selectedContact.value!!.phoneNumber,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    FilledButton(
+                        action = {
+                            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    shouldShowBottomSheet = false
+                                }
+                            }
+                        },
+                        textResource = R.string.dismiss_modal,
+                        secondary = true
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    FilledButton(
+                        action = {
+                          // make emergency contact
+                        },
+                        textResource = R.string.yes_choose_contact
+                    )
+                }
+            }
         }
     }
 }
@@ -124,7 +181,7 @@ fun EmergencyContactsScreen(
 @Composable
 private fun TopView(
     modifier: Modifier = Modifier,
-    shouldShowIcon: Boolean = true
+    shouldShowIcon: Boolean = true,
 ) {
     if (shouldShowIcon) {
         Image(
@@ -159,7 +216,7 @@ private fun SpinnerView(modifier: Modifier = Modifier) {
 private fun PermissionMissingView(
     wasDeniedPermission: Boolean,
     rationaleText: String,
-    onRequestPermission: () -> Unit
+    onRequestPermission: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -190,13 +247,14 @@ private fun PermissionMissingView(
 private fun ContactsListView(
     contacts: LazyPagingItems<ContactModel>,
     viewModel: EmergencyContactsViewModel,
+    showBottomSheet: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopView(shouldShowIcon = false)
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxHeight()
-        ){
+        ) {
             // Prototype
 //            item {
 //                SearchBar(
@@ -211,7 +269,8 @@ private fun ContactsListView(
                         displayName = it.displayName,
                         phoneNumber = it.phoneNumber,
                         onClick = {
-                            // Call drawer etc
+                            viewModel.setSelectedContact(it)
+                            showBottomSheet()
                         }
                     )
                 }

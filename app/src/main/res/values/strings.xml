@@ -12,4 +12,8 @@
 
     <string name="add_emergency_contact">Add Emergency Contact</string>
     <string name="add_emergency_contact_desc">Add at least one emergency contact who will be notified in case of an emergency</string>
+
+    <string name="add_this_number">Make Emergency Contact?</string>
+    <string name="dismiss_modal">No, Choose Another Contact</string>
+    <string name="yes_choose_contact">Yes Choose This Contact</string>
 </resources>

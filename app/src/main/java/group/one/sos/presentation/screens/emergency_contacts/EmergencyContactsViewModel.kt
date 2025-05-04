@@ -42,6 +42,9 @@ class EmergencyContactsViewModel @Inject constructor(
     private val _searchTerm = MutableStateFlow<String>("")
     val searchTerm: StateFlow<String> = _searchTerm
 
+    private val _selectedContact = MutableStateFlow<ContactModel?>(null)
+    val selectedContact: StateFlow<ContactModel?> get() = _selectedContact
+
     private var hasLoadedContacts = false
 
     /**
@@ -104,11 +107,14 @@ class EmergencyContactsViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Updates search term to the new value
-     */
+    /** Updates search term to the new value */
     fun updateSearchTerm(newValue: String) {
         _searchTerm.value = newValue
+    }
+
+    /** Sets selected contact */
+    fun setSelectedContact(contact: ContactModel) {
+       _selectedContact.value = contact
     }
 
 }
