@@ -125,7 +125,7 @@ class EmergencyContactsViewModel @Inject constructor(
             // at this point, the selected contact is assumed to exist
             dataStore.edit { store ->
                 store[PreferenceKeys.EMERGENCY_CONTACT_NAME] = _selectedContact.value!!.displayName
-                store[PreferenceKeys.EMERGENCY_CONTACT] = _selectedContact.value!!.phoneNumber
+                store[PreferenceKeys.EMERGENCY_CONTACT_NUMBER] = _selectedContact.value!!.phoneNumber
             }
             Log.d(Tag.EmergencyContact.name, "Successfully set emergency contact")
             _uiState.value = UiState.LoadedContactsList

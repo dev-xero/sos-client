@@ -38,7 +38,7 @@ class MainViewModel @Inject constructor(
             val prefs = dataStore.data.first()
             val isFirstLaunch = prefs[PreferenceKeys.IS_FIRST_LAUNCH] ?: true
             val isPermissionGrantedInDS = prefs[PreferenceKeys.IS_LOCATION_PERMISSION_GRANTED]
-            val emergencyContact = prefs[PreferenceKeys.EMERGENCY_CONTACT] ?: ""
+            val emergencyContact = prefs[PreferenceKeys.EMERGENCY_CONTACT_NUMBER] ?: ""
 
             if (isFirstLaunch) {
                 Log.d(Tag.MainActivity.name, "First launch, start destination is onboarding")

@@ -8,6 +8,6 @@ object PreferenceKeys {
     val IS_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
     val IS_LOCATION_PERMISSION_GRANTED = booleanPreferencesKey("location_permission_granted")
     val IS_CONTACTS_PERMISSION_GRANTED = booleanPreferencesKey("contacts_permission_granted")
-    val EMERGENCY_CONTACT = stringPreferencesKey("emergency_contact")
+    val EMERGENCY_CONTACT_NUMBER = stringPreferencesKey("emergency_contact_number")
     val EMERGENCY_CONTACT_NAME = stringPreferencesKey("emergency_contact_name")
 }
