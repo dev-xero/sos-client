@@ -117,4 +117,19 @@ class EmergencyContactsViewModel @Inject constructor(
        _selectedContact.value = contact
     }
 
+
+    /** Save emergency contact details to preferences datastore */
+    fun saveEmergencyContactToPreferences() {
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            // at this point, the selected contact is assumed to exist
+            dataStore.edit { store ->
+                store[PreferenceKeys.EMERGENCY_CONTACT_NAME] = _selectedContact.value!!.displayName
+                store[PreferenceKeys.EMERGENCY_CONTACT] = _selectedContact.value!!.phoneNumber
+            }
+            Log.d(Tag.EmergencyContact.name, "Successfully set emergency contact")
+            _uiState.value = UiState.LoadedContactsList
+        }
+    }
+
 }

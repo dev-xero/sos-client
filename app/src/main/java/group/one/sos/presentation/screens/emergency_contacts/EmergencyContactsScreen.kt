@@ -173,7 +173,8 @@ fun EmergencyContactsScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     FilledButton(
                         action = {
-                          // make emergency contact
+                            shouldShowBottomSheet = false
+                            viewModel.saveEmergencyContactToPreferences()
                         },
                         textResource = R.string.yes_choose_contact
                     )
