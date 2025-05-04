@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,6 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -60,7 +61,7 @@ fun EmergencyContactsScreen(
     var rationaleText by remember { mutableStateOf("") }
 
     val uiState by viewModel.uiState.collectAsState()
-    val contactsList by viewModel.contactsList.collectAsState()
+    val contacts = viewModel.contactsList.collectAsLazyPagingItems()
 
     // Permission state side effects
     LaunchedEffect(permissionState.status) {
@@ -116,7 +117,7 @@ fun EmergencyContactsScreen(
                }
 
                UiState.LoadedContactsList -> {
-                   ContactsListFragment(contactsList = contactsList ?: emptyList())
+                   ContactsListFragment(contacts = contacts)
                }
            }
         }
@@ -162,18 +163,21 @@ private fun PermissionMissingFragment(
 }
 
 @Composable
-private fun ContactsListFragment(contactsList: List<ContactModel>) {
+private fun ContactsListFragment(contacts: LazyPagingItems<ContactModel>) {
     Column(modifier = Modifier.fillMaxSize()) {
         IntroFragment(shouldShowIcon = false)
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxHeight()
         ){
-            items(contactsList) { contact ->
-                ContactPill(
-                    displayName = contact.displayName,
-                    phoneNumber = contact.phoneNumber
-                )
+            items(contacts.itemCount) { index ->
+                val contact = contacts[index]
+                contact?.let {
+                    ContactPill(
+                        displayName = it.displayName,
+                        phoneNumber = it.phoneNumber
+                    )
+                }
             }
         }
     }
