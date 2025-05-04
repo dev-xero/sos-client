@@ -3,30 +3,31 @@
 ```
 .
 ├── core
-│   ├── constants
-│   ├── dependencies
-│   ├── extensions
-│   └── utils
+│   ├── constants                  # application wide constants
+│   ├── dependencies               # dependencies via Hilt
+│   ├── extensions                 # kotlin extension functions
+│   └── utils                      # utility functions, helpers
 ├── data
-│   ├── local
-│   │   ├── database
-│   │   └── preferences
-│   ├── remote
-│   ├── repositories
-│   └── services
+│   ├── local                      # local/disk data
+│   │   ├── database         # database schemas and models
+│   │   └── preferences      # preferences data store
+│   ├── remote                     
+│   ├── repositories               # repository (data holder) impl
+│   └── services                   # related services
 ├── domain
-│   ├── contracts
-│   ├── models
-│   └── usecases
+│   ├── contracts                  # contracts/interfaces
+│   ├── models                     # domain models (OOP)
+│   └── usecases                   # usecases for ui layer
 └── presentation
-    ├── components
-    ├── navigation
-    ├── screens
-    │   ├── emergency_contacts
-    │   │   └── ui
-    │   ├── home
-    │   ├── location_services
-    │   └── onboarding_begin
-    │       └── ui
-    └── theme
+    ├── components                       # shared ui components
+    ├── navigation                       # navigation related
+    ├── screens                          # app screens
+    └── theme                            # theme related
 ```
+
+## Architecture Layers
+
+- `core`: Core, android specific code. Not particularly related to the business logic.
+- `domain`: Business/app focused logic. Interfaces and use cases live here.
+- `data`: All data sources (remote/local) are implemented here.
+- `presentation`: UI-related code, screens, navigation, and viewmodels.
