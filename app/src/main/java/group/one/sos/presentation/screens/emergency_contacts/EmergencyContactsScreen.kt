@@ -60,6 +60,7 @@ fun EmergencyContactsScreen(
     var wasDeniedPermission by remember { mutableStateOf(false) }
     var rationaleText by remember { mutableStateOf("") }
 
+    val searchTerm by viewModel.searchTerm.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
     val contacts = viewModel.contactsList.collectAsLazyPagingItems()
 
@@ -110,11 +111,41 @@ fun EmergencyContactsScreen(
                }
 
                UiState.LoadedContactsList -> {
-                   ContactsListView(contacts = contacts)
+                   ContactsListView(
+                       contacts = contacts,
+                       viewModel = viewModel
+                   )
                }
            }
         }
     }
+}
+
+@Composable
+private fun TopView(
+    modifier: Modifier = Modifier,
+    shouldShowIcon: Boolean = true
+) {
+    if (shouldShowIcon) {
+        Image(
+            painter = painterResource(R.drawable.ic_contacts),
+            contentDescription = null,
+            modifier = modifier.size(80.dp)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+    Text(
+        text = stringResource(R.string.add_emergency_contact),
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.primary,
+        textAlign = if (shouldShowIcon) TextAlign.Center else TextAlign.Start
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = stringResource(R.string.add_emergency_contact_desc),
+        textAlign = if (shouldShowIcon) TextAlign.Center else TextAlign.Start
+    )
+    Spacer(modifier = Modifier.height(24.dp))
 }
 
 @Composable
@@ -156,13 +187,23 @@ private fun PermissionMissingView(
 }
 
 @Composable
-private fun ContactsListView(contacts: LazyPagingItems<ContactModel>) {
+private fun ContactsListView(
+    contacts: LazyPagingItems<ContactModel>,
+    viewModel: EmergencyContactsViewModel,
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopView(shouldShowIcon = false)
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxHeight()
         ){
+            // Prototype
+//            item {
+//                SearchBar(
+//                    value = viewModel.searchTerm.collectAsState().value,
+//                    onValueChange = { viewModel.updateSearchTerm(it) }
+//                )
+//            }
             items(contacts.itemCount) { index ->
                 val contact = contacts[index]
                 contact?.let {
@@ -177,31 +218,4 @@ private fun ContactsListView(contacts: LazyPagingItems<ContactModel>) {
             }
         }
     }
-}
-
-@Composable
-private fun TopView(
-    modifier: Modifier = Modifier,
-    shouldShowIcon: Boolean = true
-) {
-    if (shouldShowIcon) {
-        Image(
-            painter = painterResource(R.drawable.ic_contacts),
-            contentDescription = null,
-            modifier = modifier.size(80.dp)
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-    }
-    Text(
-        text = stringResource(R.string.add_emergency_contact),
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.primary,
-        textAlign = if (shouldShowIcon) TextAlign.Center else TextAlign.Start
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = stringResource(R.string.add_emergency_contact_desc),
-        textAlign = if (shouldShowIcon) TextAlign.Center else TextAlign.Start
-    )
-    Spacer(modifier = Modifier.height(24.dp))
 }

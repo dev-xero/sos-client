@@ -15,7 +15,7 @@ class ContactsRepositoryImpl @Inject constructor(
 ) : ContactsRepository {
     override fun getPagedContacts(): Flow<PagingData<ContactModel>> {
         return Pager(
-            config = PagingConfig(pageSize = 20),
+            config = PagingConfig(pageSize = 15),
             pagingSourceFactory = { ContactsPagingSource(context) }
         ).flow
     }

@@ -39,6 +39,9 @@ class EmergencyContactsViewModel @Inject constructor(
     private val _contactsList = MutableStateFlow<PagingData<ContactModel>>(PagingData.empty())
     val contactsList: StateFlow<PagingData<ContactModel>> get() = _contactsList
 
+    private val _searchTerm = MutableStateFlow<String>("")
+    val searchTerm: StateFlow<String> = _searchTerm
+
     private var hasLoadedContacts = false
 
     /**
@@ -99,6 +102,13 @@ class EmergencyContactsViewModel @Inject constructor(
             }
             determineUiState()
         }
+    }
+
+    /**
+     * Updates search term to the new value
+     */
+    fun updateSearchTerm(newValue: String) {
+        _searchTerm.value = newValue
     }
 
 }
