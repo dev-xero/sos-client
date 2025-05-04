@@ -3,6 +3,7 @@ package group.one.sos.presentation.screens.emergency_contacts
 import android.Manifest
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +50,10 @@ import group.one.sos.core.utils.openAppSettings
 import group.one.sos.domain.models.ContactModel
 import group.one.sos.presentation.components.FilledButton
 import group.one.sos.presentation.screens.emergency_contacts.ui.ContactPill
+import group.one.sos.presentation.theme.Cherry
+import group.one.sos.presentation.theme.Gray900
 import group.one.sos.presentation.theme.Maroon
+import group.one.sos.presentation.theme.White
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -136,7 +140,8 @@ fun EmergencyContactsScreen(
             ModalBottomSheet(
                 onDismissRequest = { shouldShowBottomSheet = false },
                 sheetState = sheetState,
-                containerColor = Maroon
+                containerColor = if (isSystemInDarkTheme()) Maroon else Cherry,
+                contentColor = if (isSystemInDarkTheme()) White else Gray900
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text(
@@ -145,12 +150,12 @@ fun EmergencyContactsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = selectedContact.value!!.displayName,
+                        text = "Name: ${selectedContact.value!!.displayName}",
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = selectedContact.value!!.phoneNumber,
+                        text = "Phone Number: ${selectedContact.value!!.phoneNumber}",
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(16.dp))
