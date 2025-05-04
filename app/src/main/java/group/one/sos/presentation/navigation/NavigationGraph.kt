@@ -16,6 +16,8 @@ import group.one.sos.presentation.screens.location_services.LocationServicesNavi
 import group.one.sos.presentation.screens.location_services.LocationServicesScreen
 import group.one.sos.presentation.screens.onboarding_begin.OnboardingBeginNavigator
 import group.one.sos.presentation.screens.onboarding_begin.OnboardingBeginScreen
+import group.one.sos.presentation.screens.onboarding_complete.OnboardingCompleteNavigator
+import group.one.sos.presentation.screens.onboarding_complete.OnboardingCompleteScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -67,6 +69,10 @@ fun NavigationGraph(
         }
         composable(route = NavigationRoute.Home.route) {
             HomeScreen()
+        }
+        composable(route = NavigationRoute.OnboardingComplete.route) {
+            val navigator = remember { OnboardingCompleteNavigator(navController) }
+            OnboardingCompleteScreen(navigator = navigator)
         }
     }
 }

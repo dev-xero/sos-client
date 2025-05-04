@@ -47,8 +47,12 @@ class EmergencyContactsViewModel @Inject constructor(
 
     private var hasLoadedContacts = false
 
+    init {
+        determineUiState()
+    }
+
     /**
-     * Determines the state to dispilay based on whether contacts
+     * Determines the state to display based on whether contacts
      * permission has been granted.
      *
      * If we do not have permission to read contacts list, we default

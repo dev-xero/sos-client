@@ -175,6 +175,7 @@ fun EmergencyContactsScreen(
                         action = {
                             shouldShowBottomSheet = false
                             viewModel.saveEmergencyContactToPreferences()
+                            navigator.navigateToOnboardingComplete()
                         },
                         textResource = R.string.yes_choose_contact
                     )
