@@ -14,10 +14,8 @@ import group.one.sos.core.extensions.appDataStore
 import group.one.sos.data.local.preferences.PreferenceKeys
 import group.one.sos.domain.models.ContactModel
 import group.one.sos.domain.usecases.EmergencyContactUseCases
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,8 +36,8 @@ class EmergencyContactsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState
 
-    private var _contactsList: Flow<PagingData<ContactModel>> = emptyFlow()
-    val contactsList: Flow<PagingData<ContactModel>>  get() = _contactsList
+    private val _contactsList = MutableStateFlow<PagingData<ContactModel>>(PagingData.empty())
+    val contactsList: StateFlow<PagingData<ContactModel>> get() = _contactsList
 
     private var hasLoadedContacts = false
 
@@ -77,9 +75,14 @@ class EmergencyContactsViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            _contactsList = emergencyContactsUseCases.getPagedContacts().cachedIn(viewModelScope)
-            hasLoadedContacts = true
-            _uiState.value = UiState.LoadedContactsList
+            emergencyContactsUseCases.getPagedContacts()
+                .cachedIn(viewModelScope)
+                .collect { pagingData ->
+                    _contactsList.value = pagingData
+                    Log.d(Tag.EmergencyContact.name, "Loaded emergency contacts")
+                    hasLoadedContacts = true
+                    _uiState.value = UiState.LoadedContactsList
+                }
         }
     }
 

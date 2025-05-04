@@ -81,13 +81,6 @@ fun EmergencyContactsScreen(
         }
     }
 
-    // Decide on initial ui fragment
-    LaunchedEffect(Unit) {
-        if (uiState == UiState.Loading) {
-            viewModel.determineUiState()
-        }
-    }
-
     Scaffold { innerPadding ->
         Box(
             modifier = modifier
