@@ -43,8 +43,8 @@ import group.one.sos.R
 import group.one.sos.core.constants.Tag
 import group.one.sos.core.utils.openAppSettings
 import group.one.sos.domain.models.ContactModel
-import group.one.sos.presentation.components.ContactPill
 import group.one.sos.presentation.components.FilledButton
+import group.one.sos.presentation.screens.emergency_contacts.ui.ContactPill
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -90,11 +90,11 @@ fun EmergencyContactsScreen(
         ) {
            when (uiState)  {
                UiState.Loading -> {
-                   SpinnerFragment()
+                   SpinnerView()
                }
 
                UiState.PermissionMissing -> {
-                   PermissionMissingFragment(
+                   PermissionMissingView(
                        wasDeniedPermission = wasDeniedPermission,
                        rationaleText = rationaleText,
                        onRequestPermission = {
@@ -110,7 +110,7 @@ fun EmergencyContactsScreen(
                }
 
                UiState.LoadedContactsList -> {
-                   ContactsListFragment(contacts = contacts)
+                   ContactsListView(contacts = contacts)
                }
            }
         }
@@ -118,14 +118,14 @@ fun EmergencyContactsScreen(
 }
 
 @Composable
-private fun SpinnerFragment(modifier: Modifier = Modifier) {
+private fun SpinnerView(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
 }
 
 @Composable
-private fun PermissionMissingFragment(
+private fun PermissionMissingView(
     wasDeniedPermission: Boolean,
     rationaleText: String,
     onRequestPermission: () -> Unit
@@ -135,7 +135,7 @@ private fun PermissionMissingFragment(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        IntroFragment()
+        TopView()
         FilledButton(
             action = onRequestPermission,
             textResource = if (wasDeniedPermission)
@@ -156,9 +156,9 @@ private fun PermissionMissingFragment(
 }
 
 @Composable
-private fun ContactsListFragment(contacts: LazyPagingItems<ContactModel>) {
+private fun ContactsListView(contacts: LazyPagingItems<ContactModel>) {
     Column(modifier = Modifier.fillMaxSize()) {
-        IntroFragment(shouldShowIcon = false)
+        TopView(shouldShowIcon = false)
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxHeight()
@@ -168,7 +168,10 @@ private fun ContactsListFragment(contacts: LazyPagingItems<ContactModel>) {
                 contact?.let {
                     ContactPill(
                         displayName = it.displayName,
-                        phoneNumber = it.phoneNumber
+                        phoneNumber = it.phoneNumber,
+                        onClick = {
+                            // Call drawer etc
+                        }
                     )
                 }
             }
@@ -177,7 +180,7 @@ private fun ContactsListFragment(contacts: LazyPagingItems<ContactModel>) {
 }
 
 @Composable
-private fun IntroFragment(
+private fun TopView(
     modifier: Modifier = Modifier,
     shouldShowIcon: Boolean = true
 ) {

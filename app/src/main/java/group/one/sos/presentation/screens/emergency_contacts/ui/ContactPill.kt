@@ -1,6 +1,7 @@
-package group.one.sos.presentation.components
+package group.one.sos.presentation.screens.emergency_contacts.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,16 +23,17 @@ import group.one.sos.R
 fun ContactPill(
     modifier: Modifier = Modifier,
     displayName: String,
-    phoneNumber: String
+    phoneNumber: String,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.secondary)
-            .padding(12.dp)
+            .clickable { onClick() }
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(

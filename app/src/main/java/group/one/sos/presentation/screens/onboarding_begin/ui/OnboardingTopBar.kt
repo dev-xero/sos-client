@@ -1,4 +1,4 @@
-package group.one.sos.presentation.components
+package group.one.sos.presentation.screens.onboarding_begin.ui
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

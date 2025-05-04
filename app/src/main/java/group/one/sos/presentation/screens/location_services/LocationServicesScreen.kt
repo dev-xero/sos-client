@@ -38,7 +38,7 @@ import group.one.sos.R
 import group.one.sos.core.constants.Tag
 import group.one.sos.core.utils.openAppSettings
 import group.one.sos.presentation.components.FilledButton
-import group.one.sos.presentation.components.OnboardingTopBar
+import group.one.sos.presentation.screens.onboarding_begin.ui.OnboardingTopBar
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
