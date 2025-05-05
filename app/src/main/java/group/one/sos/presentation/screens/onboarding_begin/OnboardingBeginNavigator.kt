@@ -5,6 +5,11 @@ import group.one.sos.presentation.navigation.NavigationRoute
 
 class OnboardingBeginNavigator(private val navController: NavHostController) {
     fun navigateToLocationPermission() {
-        navController.navigate(NavigationRoute.LocationPermission.route)
+        navController.navigate(NavigationRoute.LocationPermission.route) {
+            navController.popBackStack()
+            popUpTo(NavigationRoute.LocationPermission.route) {
+                inclusive = true
+            }
+        }
     }
 }

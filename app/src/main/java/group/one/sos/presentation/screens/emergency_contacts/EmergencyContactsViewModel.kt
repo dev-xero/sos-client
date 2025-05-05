@@ -14,9 +14,9 @@ import group.one.sos.core.extensions.appDataStore
 import group.one.sos.data.local.preferences.PreferenceKeys
 import group.one.sos.domain.models.ContactModel
 import group.one.sos.domain.usecases.EmergencyContactUseCases
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,53 +47,26 @@ class EmergencyContactsViewModel @Inject constructor(
 
     private var hasLoadedContacts = false
 
-    init {
-        determineUiState()
-    }
-
-    /**
-     * Determines the state to display based on whether contacts
-     * permission has been granted.
-     *
-     * If we do not have permission to read contacts list, we default
-     * to the permissions missing screen. Otherwise we display contacts.
-     */
-    fun determineUiState() {
-        viewModelScope.launch {
-            val store = dataStore.data.first()
-            val isContactsPermissionGranted =
-                store[PreferenceKeys.IS_CONTACTS_PERMISSION_GRANTED] ?: false
-
-            Log.d(Tag.EmergencyContact.name, "is permission granted: $isContactsPermissionGranted")
-
-            if (!isContactsPermissionGranted) {
-                _uiState.value = UiState.PermissionMissing
-            } else {
-                loadContactsList()
-            }
-        }
-    }
-
     /**
      * Loads contacts from contact book.
      * 
      * A viewmodel scope is launched and we attempt to load contacts 
      * from there.
      */
-    fun loadContactsList() {
-        if(hasLoadedContacts) return
-
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            emergencyContactsUseCases.getPagedContacts()
-                .cachedIn(viewModelScope)
-                .collect { pagingData ->
-                    _contactsList.value = pagingData
-                    Log.d(Tag.EmergencyContact.name, "Loaded emergency contacts")
-                    hasLoadedContacts = true
-                    _uiState.value = UiState.LoadedContactsList
-                }
+    suspend fun loadContactsList() {
+        if(hasLoadedContacts) {
+            _uiState.value = UiState.LoadedContactsList
+            return
         }
+
+        emergencyContactsUseCases.getPagedContacts()
+            .cachedIn(viewModelScope)
+            .collect { pagingData ->
+                _contactsList.value = pagingData
+                Log.d(Tag.EmergencyContact.name, "Loaded emergency contacts")
+                hasLoadedContacts = true
+                _uiState.value = UiState.LoadedContactsList
+            }
     }
 
     /**
@@ -103,12 +76,20 @@ class EmergencyContactsViewModel @Inject constructor(
      * again.
      */
     fun onPermissionGranted() {
+        _uiState.value = UiState.Loading
         viewModelScope.launch {
             dataStore.edit { store ->
                 store[PreferenceKeys.IS_CONTACTS_PERMISSION_GRANTED] = true
             }
-            determineUiState()
+            Log.d(Tag.EmergencyContact.name, "Contacts permission granted")
+            delay(100)
+            loadContactsList()
         }
+    }
+   
+   /** Permission is missing, so request it */ 
+    fun shouldRequestPermission() {
+        _uiState.value = UiState.PermissionMissing
     }
 
     /** Updates search term to the new value */

@@ -39,6 +39,7 @@ import group.one.sos.core.constants.Tag
 import group.one.sos.core.utils.openAppSettings
 import group.one.sos.presentation.components.FilledButton
 import group.one.sos.presentation.screens.onboarding_begin.ui.OnboardingTopBar
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -61,6 +62,7 @@ fun LocationServicesScreen(
                 viewModel.grantLocationPermission()
                 showDeniedMessage = false
                 Log.d(Tag.LocationService.name, "Location permission granted.")
+                delay(500)
                 navigator.navigateToEmergencyContacts()
             }
 
@@ -70,8 +72,8 @@ fun LocationServicesScreen(
                     "Location permission is required to use core features of this app."
                 else
                     "Location access is required to proceed."
-                viewModel.revokeLocationPermission()
                 Log.d(Tag.LocationService.name, rationaleText)
+                viewModel.revokeLocationPermission()
             }
         }
     }

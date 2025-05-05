@@ -79,20 +79,24 @@ fun EmergencyContactsScreen(
     val contacts = viewModel.contactsList.collectAsLazyPagingItems()
     val selectedContact = viewModel.selectedContact.collectAsState()
 
-    // Permission state side effects
     LaunchedEffect(permissionState.status) {
         when {
             permissionState.status.isGranted -> {
+                Log.d("DEBUG", "Permission granted inside handler")
                 viewModel.onPermissionGranted()
             }
 
             hasRequested -> {
                 wasDeniedPermission = true
-                rationaleText =
+                val rationale =
                     if (permissionState.status.shouldShowRationale)
                         "Permission is required to read your contact list"
                     else "Contacts access is required"
                 Log.d(Tag.EmergencyContact.name, rationaleText)
+            }
+
+            else -> {
+                viewModel.shouldRequestPermission()
             }
         }
     }
