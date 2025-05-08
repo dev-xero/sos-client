@@ -6,4 +6,7 @@ sealed class NavigationRoute(val route: String) {
     data object EmergencyContacts: NavigationRoute("emergency_routes")
     data object OnboardingComplete : NavigationRoute("onboarding_complete")
     data object Home : NavigationRoute("home")
+    data object Contacts : NavigationRoute("contacts")
+    data object Reports : NavigationRoute("reports")
+    data object Settings : NavigationRoute("settings")
 }
