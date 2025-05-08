@@ -68,7 +68,7 @@ fun NavigationGraph(
             EmergencyContactsScreen(navigator = navigator)
         }
         composable(route = NavigationRoute.Home.route) {
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
         composable(route = NavigationRoute.OnboardingComplete.route) {
             val navigator = remember { OnboardingCompleteNavigator(navController) }
