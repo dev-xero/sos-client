@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -77,7 +76,7 @@ private fun LocationChip(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(18.dp))
-            .background(color = if (isSystemInDarkTheme()) LimeGreen else LightGreen)
+            .background(color = if (isDarkTheme) LimeGreen else LightGreen)
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -88,21 +87,25 @@ private fun LocationChip(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(16.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(color = if (isDarkTheme) OliveGreen.copy(0.5F) else Color.Blue),
+                    .background(
+                        color = if (isDarkTheme) OliveGreen.copy(0.5F) else DarkGreen.copy(
+                            0.5F
+                        )
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
                         .size(8.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(color = if (isDarkTheme) OliveGreen else Color.Red)
+                        .background(color = if (isDarkTheme) OliveGreen else DarkGreen)
                 )
             }
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = stringResource(R.string.location_active),
                 style = MaterialTheme.typography.labelSmall,
-                color = if (isSystemInDarkTheme()) Maroon else DarkGreen
+                color = if (isDarkTheme) Maroon else DarkGreen
             )
         }
     }
