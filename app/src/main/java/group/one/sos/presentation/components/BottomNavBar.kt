@@ -20,9 +20,10 @@ import group.one.sos.presentation.theme.Primary
 @Composable
 fun BottomNavBar(
     modifier: Modifier = Modifier, navController: NavController,
+    currentRoute: String
 ) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry.value?.destination?.route
+//    val currentRoute = navBackStackEntry.value?.destination?.route
 
     NavigationBar(containerColor = if (isSystemInDarkTheme()) Maroon else Cherry.copy(0.1F)) {
         BottomNavItems.forEach { navItem ->
@@ -31,11 +32,7 @@ fun BottomNavBar(
                 selected = currentRoute == navItem.route,
                 onClick = {
                     if (currentRoute != navItem.route) {
-                        navController.navigate(navItem.route) {
-                            popUpTo(navItem.route) {
-                                inclusive = true
-                            }
-                        }
+                        navController.navigate(navItem.route)
                     }
                 },
                 icon = {
