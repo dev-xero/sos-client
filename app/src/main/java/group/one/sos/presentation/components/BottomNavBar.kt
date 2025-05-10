@@ -26,31 +26,33 @@ fun BottomNavBar(
 
     NavigationBar(containerColor = if (isSystemInDarkTheme()) Maroon else Cherry.copy(0.1F)) {
         BottomNavItems.forEach { navItem ->
-            val isSelected = currentRoute == navItem.route
+
             NavigationBarItem(
-                selected = isSelected,
+                selected = currentRoute == navItem.route,
                 onClick = {
-                    navController.navigate(navItem.route) {
-                        popUpTo(navItem.route) {
-                            inclusive = true
+                    if (currentRoute != navItem.route) {
+                        navController.navigate(navItem.route) {
+                            popUpTo(navItem.route) {
+                                inclusive = true
+                            }
                         }
                     }
                 },
                 icon = {
                     Icon(
                         painter = painterResource(
-                            if (isSelected) navItem.selectedIconRes
+                            if (currentRoute == navItem.route) navItem.selectedIconRes
                             else navItem.unselectedIconRes
                         ),
                         contentDescription = navItem.label,
-                        tint = if (isSelected) MaterialTheme.colorScheme.primary
+                        tint = if (currentRoute == navItem.route) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurface
                     )
                 },
                 label = {
                     Text(
                         text = navItem.label,
-                        color = if (isSelected) MaterialTheme.colorScheme.primary
+                        color = if (currentRoute == navItem.route) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurface
                     )
                 },
