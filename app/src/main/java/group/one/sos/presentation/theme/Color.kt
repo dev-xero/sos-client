@@ -3,6 +3,7 @@ package group.one.sos.presentation.theme
 import androidx.compose.ui.graphics.Color
 
 val Primary = Color(0xFFCD0134)
+val Secondary = Color(0xFFC47E7F)
 val Maroon = Color(0xFF100205)
 val PaleMaroon = Color(0xFF200C10)
 val White = Color(0xFFFFFFFF)

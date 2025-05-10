@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import group.one.sos.presentation.screens.contacts.ContactsScreen
 import group.one.sos.presentation.screens.emergency_contacts.EmergencyContactsNavigator
 import group.one.sos.presentation.screens.emergency_contacts.EmergencyContactsScreen
 import group.one.sos.presentation.screens.home.HomeScreen
@@ -18,6 +19,8 @@ import group.one.sos.presentation.screens.onboarding_begin.OnboardingBeginNaviga
 import group.one.sos.presentation.screens.onboarding_begin.OnboardingBeginScreen
 import group.one.sos.presentation.screens.onboarding_complete.OnboardingCompleteNavigator
 import group.one.sos.presentation.screens.onboarding_complete.OnboardingCompleteScreen
+import group.one.sos.presentation.screens.reports.ReportsScreen
+import group.one.sos.presentation.screens.settings.SettingsScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -67,12 +70,26 @@ fun NavigationGraph(
             val navigator = remember { EmergencyContactsNavigator(navController) }
             EmergencyContactsScreen(navigator = navigator)
         }
-        composable(route = NavigationRoute.Home.route) {
-            HomeScreen(navController = navController)
-        }
+
         composable(route = NavigationRoute.OnboardingComplete.route) {
             val navigator = remember { OnboardingCompleteNavigator(navController) }
             OnboardingCompleteScreen(navigator = navigator)
+        }
+
+        composable(route = NavigationRoute.Home.route) {
+            HomeScreen(navController = navController)
+        }
+
+        composable(route = NavigationRoute.Contacts.route) {
+            ContactsScreen(navController = navController)
+        }
+
+        composable(route = NavigationRoute.Reports.route) {
+            ReportsScreen(navController = navController)
+        }
+
+        composable(route = NavigationRoute.Settings.route) {
+            SettingsScreen(navController = navController)
         }
     }
 }

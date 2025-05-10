@@ -14,7 +14,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import group.one.sos.presentation.navigation.Constants.BottomNavItems
 import group.one.sos.presentation.theme.Cherry
-import group.one.sos.presentation.theme.PaleMaroon
+import group.one.sos.presentation.theme.Maroon
+import group.one.sos.presentation.theme.Primary
 
 @Composable
 fun BottomNavBar(
@@ -23,12 +24,18 @@ fun BottomNavBar(
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
-    NavigationBar(containerColor = if (isSystemInDarkTheme()) PaleMaroon else Cherry) {
+    NavigationBar(containerColor = if (isSystemInDarkTheme()) Maroon else Cherry.copy(0.1F)) {
         BottomNavItems.forEach { navItem ->
             val isSelected = currentRoute == navItem.route
             NavigationBarItem(
                 selected = isSelected,
-                onClick = { navController.navigate(navItem.route) },
+                onClick = {
+                    navController.navigate(navItem.route) {
+                        popUpTo(navItem.route) {
+                            inclusive = true
+                        }
+                    }
+                },
                 icon = {
                     Icon(
                         painter = painterResource(
@@ -48,7 +55,7 @@ fun BottomNavBar(
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4F)
+                    indicatorColor = Primary.copy(alpha = 0.2F)
                 )
             )
         }
