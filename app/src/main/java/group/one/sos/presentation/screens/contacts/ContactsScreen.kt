@@ -49,6 +49,7 @@ fun ContactsScreen(modifier: Modifier = Modifier, navController: NavController) 
         Column(
             modifier = modifier
                 .padding(innerPadding)
+                .padding(12.dp)
                 .fillMaxSize()
         ) {
             LazyVerticalGrid(
