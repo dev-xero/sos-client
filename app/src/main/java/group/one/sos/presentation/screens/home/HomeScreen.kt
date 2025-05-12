@@ -1,12 +1,15 @@
 package group.one.sos.presentation.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,10 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import group.one.sos.R
+import group.one.sos.core.constants.Tag
 import group.one.sos.presentation.components.BottomNavBar
 import group.one.sos.presentation.navigation.NavigationRoute
 import group.one.sos.presentation.theme.DarkGreen
@@ -31,6 +37,7 @@ import group.one.sos.presentation.theme.LightGreen
 import group.one.sos.presentation.theme.LimeGreen
 import group.one.sos.presentation.theme.Maroon
 import group.one.sos.presentation.theme.OliveGreen
+import group.one.sos.presentation.theme.Primary
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
@@ -44,8 +51,14 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
             )
         }
     ) { innerPadding ->
-        Column(modifier = modifier.padding(innerPadding)) {
-            // Home screen UI
+        Column(
+            modifier = modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            SOSButton()
         }
     }
 }
@@ -106,6 +119,33 @@ private fun LocationChip(modifier: Modifier = Modifier) {
                 text = stringResource(R.string.location_active),
                 style = MaterialTheme.typography.labelSmall,
                 color = if (isDarkTheme) Maroon else DarkGreen
+            )
+        }
+    }
+}
+
+@Composable
+private fun SOSButton(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(280.dp)
+            .clip(RoundedCornerShape(280.dp))
+            .background(Primary.copy(0.5F)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(260.dp)
+                .clip(RoundedCornerShape(260.dp))
+                .background(Primary).clickable {
+                    Log.d(Tag.Home.name, "SOS Sent Out")
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "SOS",
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 64.sp
             )
         }
     }
