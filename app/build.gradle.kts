@@ -68,4 +68,6 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.paging.compose)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
 }
