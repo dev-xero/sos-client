@@ -23,4 +23,8 @@
 
     <string name="emergency_response">Emergency Response</string>
     <string name="location_active">Location Active</string>
+
+    <string name="contacts_header">Contacts</string>
+    <string name="reports_header">Reports</string>
+    <string name="settings_header">Settings</string>
 </resources>
