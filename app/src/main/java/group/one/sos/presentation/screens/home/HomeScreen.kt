@@ -1,6 +1,9 @@
 package group.one.sos.presentation.screens.home
 
 import android.util.Log
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -19,9 +22,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -126,13 +132,25 @@ private fun LocationChip(modifier: Modifier = Modifier) {
 
 @Composable
 private fun SOSButton(modifier: Modifier = Modifier) {
+    val scale = remember { Animatable(1f) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            scale.animateTo(0.95f, animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing))
+            scale.animateTo(1.05f, animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing))
+        }
+    }
+
     Box(
-        modifier = modifier
-            .size(280.dp)
-            .clip(RoundedCornerShape(280.dp))
-            .background(Primary.copy(0.5F)),
         contentAlignment = Alignment.Center,
     ) {
+       Box(
+           modifier = modifier
+               .size(280.dp)
+               .scale(scale.value)
+               .clip(RoundedCornerShape(280.dp))
+               .background(Primary.copy(0.5F)),
+       )
         Box(
             modifier = Modifier
                 .size(260.dp)
