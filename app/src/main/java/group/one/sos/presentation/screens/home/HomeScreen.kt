@@ -19,9 +19,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,10 +46,23 @@ import group.one.sos.presentation.theme.LimeGreen
 import group.one.sos.presentation.theme.Maroon
 import group.one.sos.presentation.theme.OliveGreen
 import group.one.sos.presentation.theme.Primary
+import group.one.sos.presentation.theme.White
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     val viewModel: HomeViewModel = hiltViewModel()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+//    val coroutineScope = rememberCoroutineScope()
+    val error by viewModel.error.collectAsState()
+
+    LaunchedEffect(error) {
+        if (error != null) {
+            snackbarHostState.showSnackbar(error!!)
+            viewModel.clearError()
+        }
+    }
+
     Scaffold(
         topBar = { HomeScreenTopBar() },
         bottomBar = {
@@ -53,7 +70,8 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
                 navController = navController,
                 currentRoute = NavigationRoute.Home.route
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         Column(
             modifier = modifier
@@ -159,7 +177,8 @@ private fun SOSButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
             Text(
                 text = "SOS",
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 64.sp
+                fontSize = 64.sp,
+                color = White
             )
         }
     }

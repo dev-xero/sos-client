@@ -19,6 +19,7 @@ import group.one.sos.domain.contracts.EmergencyRepository
 import group.one.sos.domain.models.EmergencyResponse
 import group.one.sos.domain.models.EmergencyType
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,8 +40,8 @@ class HomeViewModel @Inject constructor(
     var isLoading by mutableStateOf(false)
         private set
 
-    var error by mutableStateOf<String?>(null)
-        private set
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error
 
     init {
         startLocationUpdates()
@@ -77,7 +78,7 @@ class HomeViewModel @Inject constructor(
         if (_locationFlow.value != null) {
             viewModelScope.launch {
                 isLoading = true
-                error = null
+                _error.value = null
 
                 emergencyRepository.getEmergencyServices(
                     responder = EmergencyType.Police,
@@ -90,13 +91,17 @@ class HomeViewModel @Inject constructor(
                         Log.i(Tag.Home.name, res.toString())
                     }
                     .onFailure { e ->
-                        error = e.message
+                        _error.value = e.message
                         Log.e(Tag.Home.name, e.message.toString())
                     }
 
                 isLoading = false
             }
         }
+    }
+
+    fun clearError() {
+        _error.value = null
     }
 
     override fun onCleared() {
