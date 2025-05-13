@@ -15,7 +15,9 @@ import group.one.sos.core.constants.Tag
 import group.one.sos.domain.contracts.EmergencyRepository
 import group.one.sos.domain.models.EmergencyResponse
 import group.one.sos.domain.models.EmergencyType
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +26,7 @@ sealed class UiState {
     object Loading : UiState()
     object Fetching : UiState()
     object Base : UiState()
+    object LoadedResponders : UiState()
 }
 
 @HiltViewModel
@@ -45,6 +48,9 @@ class HomeViewModel @Inject constructor(
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    private val _navigateToResults = MutableSharedFlow<Unit>()
+    val navigateToResults: SharedFlow<Unit> = _navigateToResults
 
     init {
         startLocationUpdates()
@@ -86,20 +92,21 @@ class HomeViewModel @Inject constructor(
 
                 emergencyRepository.getEmergencyServices(
                     responder = EmergencyType.Police,
-                    radius = 30000,
+                    radius = 300000,
                     lat = _locationFlow.value!!.latitude,
                     long = _locationFlow.value!!.longitude,
                 )
                     .onSuccess { res ->
                         _services.value = res
                         Log.i(Tag.Home.name, res.toString())
+                        _uiState.value = UiState.Base
+                        _navigateToResults.emit(Unit)
                     }
                     .onFailure { e ->
                         _error.value = e.message
                         Log.e(Tag.Home.name, e.message.toString())
+                        _uiState.value = UiState.Base
                     }
-
-                _uiState.value = UiState.Base
             }
         }
     }

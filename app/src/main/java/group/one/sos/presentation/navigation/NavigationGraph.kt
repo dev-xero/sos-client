@@ -1,10 +1,12 @@
 package group.one.sos.presentation.navigation
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +15,7 @@ import group.one.sos.presentation.screens.contacts.ContactsScreen
 import group.one.sos.presentation.screens.emergency_contacts.EmergencyContactsNavigator
 import group.one.sos.presentation.screens.emergency_contacts.EmergencyContactsScreen
 import group.one.sos.presentation.screens.home.HomeScreen
+import group.one.sos.presentation.screens.home.HomeViewModel
 import group.one.sos.presentation.screens.location_services.LocationServicesNavigator
 import group.one.sos.presentation.screens.location_services.LocationServicesScreen
 import group.one.sos.presentation.screens.onboarding_begin.OnboardingBeginNavigator
@@ -21,7 +24,9 @@ import group.one.sos.presentation.screens.onboarding_complete.OnboardingComplete
 import group.one.sos.presentation.screens.onboarding_complete.OnboardingCompleteScreen
 import group.one.sos.presentation.screens.reports.ReportsScreen
 import group.one.sos.presentation.screens.settings.SettingsScreen
+import group.one.sos.presentation.screens.sos_responders.SOSRespondersScreen
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavigationGraph(
@@ -76,8 +81,17 @@ fun NavigationGraph(
             OnboardingCompleteScreen(navigator = navigator)
         }
 
-        composable(route = NavigationRoute.Home.route) {
-            HomeScreen(navController = navController)
+        composable(route = NavigationRoute.Home.route) { backStackEntry ->
+            val viewModel: HomeViewModel = hiltViewModel(backStackEntry)
+            HomeScreen(navController = navController, viewModel = viewModel)
+        }
+
+        composable(route = NavigationRoute.SOSResponders.route) {
+            val parentEntry = remember {
+                navController.getBackStackEntry(NavigationRoute.Home.route)
+            }
+            val viewModel: HomeViewModel = hiltViewModel(parentEntry)
+            SOSRespondersScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(route = NavigationRoute.Contacts.route) {

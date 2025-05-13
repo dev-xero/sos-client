@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import group.one.sos.R
 import group.one.sos.presentation.components.BottomNavBar
@@ -52,13 +52,18 @@ import group.one.sos.presentation.theme.Primary
 import group.one.sos.presentation.theme.White
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
-    val viewModel: HomeViewModel = hiltViewModel()
-
+fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, viewModel: HomeViewModel) {
     val snackbarHostState = remember { SnackbarHostState() }
-//    val coroutineScope = rememberCoroutineScope()
     val error by viewModel.error.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+
+    val navigateToResults by viewModel.navigateToResults.collectAsStateWithLifecycle(initialValue = null)
+
+    LaunchedEffect(navigateToResults) {
+        if (navigateToResults != null) {
+            navController.navigate(NavigationRoute.SOSResponders.route)
+        }
+    }
 
     LaunchedEffect(error) {
         if (error != null) {
@@ -84,14 +89,19 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            SOSButton(onClick = { viewModel.sendSOSRequest() }, disabled = (uiState == UiState.Loading || uiState == UiState.Fetching))
+            SOSButton(
+                onClick = { viewModel.sendSOSRequest() },
+                disabled = (uiState == UiState.Loading || uiState == UiState.Fetching)
+            )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = stringResource(when (uiState) {
-                    is UiState.Base -> R.string.tap_sos
-                    is UiState.Fetching -> R.string.fetching_responders
-                    is UiState.Loading -> R.string.getting_location
-                }),
+                text = stringResource(
+                    when (uiState) {
+                        is UiState.Base -> R.string.tap_sos
+                        is UiState.Fetching -> R.string.fetching_responders
+                        else -> R.string.getting_location
+                    }
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.width(240.dp)
@@ -200,7 +210,7 @@ private fun SOSButton(modifier: Modifier = Modifier, onClick: () -> Unit, disabl
                 text = "SOS",
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 64.sp,
-                color = White
+                color = if (disabled) White.copy(0.5F) else White
             )
         }
     }
