@@ -1,6 +1,5 @@
 package group.one.sos.presentation.screens.home
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -35,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import group.one.sos.R
-import group.one.sos.core.constants.Tag
 import group.one.sos.presentation.components.BottomNavBar
 import group.one.sos.presentation.navigation.NavigationRoute
 import group.one.sos.presentation.theme.DarkGreen
@@ -64,7 +62,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            SOSButton()
+            SOSButton(onClick = { viewModel.sendSOSRequest() })
         }
     }
 }
@@ -131,7 +129,7 @@ private fun LocationChip(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SOSButton(modifier: Modifier = Modifier) {
+private fun SOSButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     val scale = remember { Animatable(1f) }
 
     LaunchedEffect(Unit) {
@@ -155,9 +153,7 @@ private fun SOSButton(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(260.dp)
                 .clip(RoundedCornerShape(260.dp))
-                .background(Primary).clickable {
-                    Log.d(Tag.Home.name, "SOS Sent Out")
-                },
+                .background(Primary).clickable { onClick() },
             contentAlignment = Alignment.Center
         ) {
             Text(

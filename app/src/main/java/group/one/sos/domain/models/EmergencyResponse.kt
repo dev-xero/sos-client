@@ -7,5 +7,5 @@ data class EmergencyResponse(
     val id: Int,
     val name: String,
     val type: String,
-    val callcode: String,
+    val callcode: String?,
 )

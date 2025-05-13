@@ -3,7 +3,11 @@ package group.one.sos.presentation.screens.home
 import android.location.Location
 import android.os.Looper
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -11,19 +15,32 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import group.one.sos.core.constants.Tag
+import group.one.sos.domain.contracts.EmergencyRepository
+import group.one.sos.domain.models.EmergencyResponse
+import group.one.sos.domain.models.EmergencyType
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor (
-    private val fusedLocationProviderClient: FusedLocationProviderClient
+class HomeViewModel @Inject constructor(
+    private val fusedLocationProviderClient: FusedLocationProviderClient,
+    private val emergencyRepository: EmergencyRepository
 ) : ViewModel() {
 
     private val _locationFlow = MutableStateFlow<Location?>(null)
-    val locationFlow: StateFlow<Location?> = _locationFlow
+//    val locationFlow: StateFlow<Location?> = _locationFlow
 
     private var locationCallBack: LocationCallback? = null
+
+    var services by mutableStateOf<List<EmergencyResponse>>(emptyList())
+        private set
+
+    var isLoading by mutableStateOf(false)
+        private set
+
+    var error by mutableStateOf<String?>(null)
+        private set
 
     init {
         startLocationUpdates()
@@ -52,6 +69,33 @@ class HomeViewModel @Inject constructor (
             )
         } catch (e: SecurityException) {
             Log.e(Tag.Home.name, "Missing location permission", e)
+        }
+    }
+
+    fun sendSOSRequest() {
+        Log.i(Tag.Home.name, "SOS Sent Out!")
+        if (_locationFlow.value != null) {
+            viewModelScope.launch {
+                isLoading = true
+                error = null
+
+                emergencyRepository.getEmergencyServices(
+                    responder = EmergencyType.Police,
+                    radius = 30000,
+                    lat = _locationFlow.value!!.latitude,
+                    long = _locationFlow.value!!.longitude,
+                )
+                    .onSuccess { res ->
+                        services = res
+                        Log.i(Tag.Home.name, res.toString())
+                    }
+                    .onFailure { e ->
+                        error = e.message
+                        Log.e(Tag.Home.name, e.message.toString())
+                    }
+
+                isLoading = false
+            }
         }
     }
 

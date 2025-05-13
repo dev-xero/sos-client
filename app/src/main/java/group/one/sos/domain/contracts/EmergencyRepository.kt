@@ -7,7 +7,7 @@ interface EmergencyRepository {
     suspend fun getEmergencyServices(
         responder: EmergencyType,
         radius: Int, // in meters
-        lat: Float,
-        long: Float
+        lat: Double,
+        long: Double
     ): Result<List<EmergencyResponse>>
 }

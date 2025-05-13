@@ -12,8 +12,8 @@ class EmergencyRepositoryImpl @Inject constructor(
     override suspend fun getEmergencyServices(
         responder: EmergencyType,
         radius: Int,
-        lat: Float,
-        long: Float
+        lat: Double,
+        long: Double,
     ): Result<List<EmergencyResponse>> {
         return apiService.getEmergencyServices(responder, radius, lat, long)
     }
