@@ -1,6 +1,9 @@
 package group.one.sos.domain.models
 
-data class EmergencyServicesApiResponse(
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class EmergencyResponse(
     val id: Int,
     val name: String,
     val type: String,

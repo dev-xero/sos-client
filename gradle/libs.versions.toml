@@ -14,6 +14,7 @@ ktorClientCio = "2.3.12"
 ktorClientContentNegotiation = "2.3.12"
 ktorClientCore = "2.3.12"
 ktorClientAndroid = "2.3.12"
+ktorClientLogging = "2.3.12"
 ktorSerializationKotlinxJson = "2.3.12"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
@@ -60,6 +61,7 @@ ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "k
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCio" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClientContentNegotiation" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorClientLogging" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorSerializationKotlinxJson" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
