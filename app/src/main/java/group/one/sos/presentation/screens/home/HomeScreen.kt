@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,6 +47,7 @@ import group.one.sos.presentation.theme.LightGreen
 import group.one.sos.presentation.theme.LimeGreen
 import group.one.sos.presentation.theme.Maroon
 import group.one.sos.presentation.theme.OliveGreen
+import group.one.sos.presentation.theme.PaleMaroon
 import group.one.sos.presentation.theme.Primary
 import group.one.sos.presentation.theme.White
 
@@ -55,6 +58,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     val snackbarHostState = remember { SnackbarHostState() }
 //    val coroutineScope = rememberCoroutineScope()
     val error by viewModel.error.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(error) {
         if (error != null) {
@@ -80,7 +84,18 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            SOSButton(onClick = { viewModel.sendSOSRequest() })
+            SOSButton(onClick = { viewModel.sendSOSRequest() }, disabled = (uiState == UiState.Loading || uiState == UiState.Fetching))
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(when (uiState) {
+                    is UiState.Base -> R.string.tap_sos
+                    is UiState.Fetching -> R.string.fetching_responders
+                    is UiState.Loading -> R.string.getting_location
+                }),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.width(240.dp)
+            )
         }
     }
 }
@@ -147,31 +162,38 @@ private fun LocationChip(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SOSButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun SOSButton(modifier: Modifier = Modifier, onClick: () -> Unit, disabled: Boolean) {
     val scale = remember { Animatable(1f) }
 
     LaunchedEffect(Unit) {
         while (true) {
-            scale.animateTo(0.95f, animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing))
-            scale.animateTo(1.05f, animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing))
+            scale.animateTo(
+                0.95f,
+                animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
+            )
+            scale.animateTo(
+                1.05f,
+                animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
+            )
         }
     }
 
     Box(
         contentAlignment = Alignment.Center,
     ) {
-       Box(
-           modifier = modifier
-               .size(280.dp)
-               .scale(scale.value)
-               .clip(RoundedCornerShape(280.dp))
-               .background(Primary.copy(0.5F)),
-       )
+        Box(
+            modifier = modifier
+                .size(280.dp)
+                .scale(scale.value)
+                .clip(RoundedCornerShape(280.dp))
+                .background(if (disabled) PaleMaroon.copy(0.5F) else Primary.copy(0.5F)),
+        )
         Box(
             modifier = Modifier
                 .size(260.dp)
                 .clip(RoundedCornerShape(260.dp))
-                .background(Primary).clickable { onClick() },
+                .background(if (disabled) PaleMaroon else Primary)
+                .clickable { if (!disabled) onClick() },
             contentAlignment = Alignment.Center
         ) {
             Text(

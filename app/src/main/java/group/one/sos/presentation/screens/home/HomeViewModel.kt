@@ -3,9 +3,6 @@ package group.one.sos.presentation.screens.home
 import android.location.Location
 import android.os.Looper
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -23,6 +20,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed class UiState {
+    object Loading : UiState()
+    object Fetching : UiState()
+    object Base : UiState()
+}
+
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val fusedLocationProviderClient: FusedLocationProviderClient,
@@ -34,11 +37,11 @@ class HomeViewModel @Inject constructor(
 
     private var locationCallBack: LocationCallback? = null
 
-    var services by mutableStateOf<List<EmergencyResponse>>(emptyList())
-        private set
+    private val _services = MutableStateFlow<List<EmergencyResponse>>(emptyList())
+    val services: StateFlow<List<EmergencyResponse>> = _services
 
-    var isLoading by mutableStateOf(false)
-        private set
+    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
+    val uiState: StateFlow<UiState> = _uiState
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
@@ -57,6 +60,7 @@ class HomeViewModel @Inject constructor(
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
                     _locationFlow.value = location
+                    _uiState.value = UiState.Base
                     Log.d(Tag.Home.name, "Lat: ${location.latitude}, Long: ${location.longitude}")
                 }
             }
@@ -77,7 +81,7 @@ class HomeViewModel @Inject constructor(
         Log.i(Tag.Home.name, "SOS Sent Out!")
         if (_locationFlow.value != null) {
             viewModelScope.launch {
-                isLoading = true
+                _uiState.value = UiState.Fetching
                 _error.value = null
 
                 emergencyRepository.getEmergencyServices(
@@ -87,7 +91,7 @@ class HomeViewModel @Inject constructor(
                     long = _locationFlow.value!!.longitude,
                 )
                     .onSuccess { res ->
-                        services = res
+                        _services.value = res
                         Log.i(Tag.Home.name, res.toString())
                     }
                     .onFailure { e ->
@@ -95,7 +99,7 @@ class HomeViewModel @Inject constructor(
                         Log.e(Tag.Home.name, e.message.toString())
                     }
 
-                isLoading = false
+                _uiState.value = UiState.Base
             }
         }
     }
