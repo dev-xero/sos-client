@@ -1,6 +1,8 @@
 package group.one.sos.presentation.screens.sos_responders
 
+import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,9 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import group.one.sos.R
 import group.one.sos.domain.models.EmergencyResponse
@@ -91,9 +95,17 @@ private fun SOSRespondersTopBar(modifier: Modifier = Modifier, onBackClicked: ()
 
 @Composable
 private fun EmergencyServicePill(modifier: Modifier = Modifier, service: EmergencyResponse) {
+    val context = LocalContext.current
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
+            .clickable {
+                val intent = Intent(Intent.ACTION_DIAL).apply {
+                    data = "tel:${service.callcode}".toUri()
+                }
+                context.startActivity(intent)
+            }
             .background(if (isSystemInDarkTheme()) PaleMaroon else Cherry)
             .padding(8.dp)
     ) {
