@@ -4,8 +4,9 @@ import group.one.sos.data.remote.RemoteApiService
 import group.one.sos.domain.contracts.EmergencyRepository
 import group.one.sos.domain.models.EmergencyResponse
 import group.one.sos.domain.models.EmergencyType
+import javax.inject.Inject
 
-class EmergencyRepositoryImpl(
+class EmergencyRepositoryImpl @Inject constructor(
     private val apiService: RemoteApiService
 ): EmergencyRepository {
     override suspend fun getEmergencyServices(
