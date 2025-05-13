@@ -33,4 +33,6 @@
     <string name="tap_sos">Tap the SOS button to get nearest emergency responders within 10km</string>
     <string name="getting_location">Hang on, getting current coordinates…</string>
     <string name="fetching_responders">Finding nearest responders…</string>
+
+    <string name="nearest_emergency_responders">Nearest Emergency Responders</string>
 </resources>

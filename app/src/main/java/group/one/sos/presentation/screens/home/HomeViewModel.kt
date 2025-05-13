@@ -38,6 +38,8 @@ class HomeViewModel @Inject constructor(
     private val _locationFlow = MutableStateFlow<Location?>(null)
 //    val locationFlow: StateFlow<Location?> = _locationFlow
 
+    private var hasSetBaseState = false;
+
     private var locationCallBack: LocationCallback? = null
 
     private val _services = MutableStateFlow<List<EmergencyResponse>>(emptyList())
@@ -65,8 +67,11 @@ class HomeViewModel @Inject constructor(
         locationCallBack = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
+                    if (!hasSetBaseState) {
+                        _uiState.value = UiState.Base
+                        hasSetBaseState = true
+                    }
                     _locationFlow.value = location
-                    _uiState.value = UiState.Base
                     Log.d(Tag.Home.name, "Lat: ${location.latitude}, Long: ${location.longitude}")
                 }
             }
@@ -99,7 +104,6 @@ class HomeViewModel @Inject constructor(
                     .onSuccess { res ->
                         _services.value = res
                         Log.i(Tag.Home.name, res.toString())
-                        _uiState.value = UiState.Base
                         _navigateToResults.emit(Unit)
                     }
                     .onFailure { e ->
@@ -109,6 +113,10 @@ class HomeViewModel @Inject constructor(
                     }
             }
         }
+    }
+
+    fun setUiStateToBase() {
+        _uiState.value = UiState.Base
     }
 
     fun clearError() {
