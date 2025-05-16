@@ -97,7 +97,7 @@ class HomeViewModel @Inject constructor(
 
                 emergencyRepository.getEmergencyServices(
                     responder = EmergencyType.Police,
-                    radius = 300000,
+                    radius = 20_000,
                     lat = _locationFlow.value!!.latitude,
                     long = _locationFlow.value!!.longitude,
                 )
