@@ -20,4 +20,19 @@
     <string name="all_set">All Set!</string>
     <string name="sos_is_configured">Your SOS app is now configured and ready to use in case of an emergency</string>
     <string name="start_using_sos">Start Using SOS</string>
+
+    <string name="emergency_response">Emergency Response</string>
+    <string name="location_active">Location Active</string>
+
+    <string name="contacts_header">Contacts</string>
+    <string name="reports_header">Reports</string>
+    <string name="settings_header">Settings</string>
+
+    <string name="reports_recent_incidents">Recent Incidents</string>
+
+    <string name="tap_sos">Tap the SOS button to get nearest emergency responders within 10km</string>
+    <string name="getting_location">Hang on, getting current coordinates…</string>
+    <string name="fetching_responders">Finding nearest responders…</string>
+
+    <string name="nearest_emergency_responders">Nearest Emergency Responders</string>
 </resources>

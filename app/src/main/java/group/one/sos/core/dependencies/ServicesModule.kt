@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import group.one.sos.data.remote.RemoteApiService
 import group.one.sos.data.services.UserLocationServiceImpl
 import group.one.sos.domain.contracts.UserLocationService
 import javax.inject.Singleton
@@ -25,5 +26,11 @@ object ServicesModule {
     @Singleton
     fun provideUserLocationService(fusedLocationProviderClient: FusedLocationProviderClient): UserLocationService {
         return UserLocationServiceImpl(fusedLocationProviderClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteApiService(): RemoteApiService {
+        return RemoteApiService()
     }
 }
