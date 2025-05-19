@@ -21,5 +21,11 @@ interface EmergencyRepository {
         lat: Double,
         long: Double,
 
-        ): Result<IncidentResponse>
+    ): Result<IncidentResponse>
+
+    suspend fun getIncidents(
+        lat: Double,
+        long: Double,
+        radius: Int
+    ): Result<List<IncidentResponse>>
 }

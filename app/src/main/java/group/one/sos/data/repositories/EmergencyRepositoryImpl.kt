@@ -30,4 +30,12 @@ class EmergencyRepositoryImpl @Inject constructor(
     ): Result<IncidentResponse> {
         return apiService.reportIncident(incidentType, description, photos, lat, long)
     }
+
+    override suspend fun getIncidents(
+        lat: Double,
+        long: Double,
+        radius: Int
+    ): Result<List<IncidentResponse>> {
+       return apiService.getIncidents(lat, long, radius)
+    }
 }

@@ -65,6 +65,31 @@ class RemoteApiService {
         }
     }
 
+    suspend fun getIncidents(
+        lat: Double,
+        long: Double,
+        radius: Int
+    ): Result<List<IncidentResponse>> {
+        return try {
+            val response: ApiResponse<List<IncidentResponse>> =
+                httpClient.get("$baseURL/incidents") {
+                    url {
+                        parameters.append("latitude", lat.toString())
+                        parameters.append("longitude", long.toString())
+                        parameters.append("radius", radius.toString())
+                    }
+                }.body()
+
+            if (response.success && response.data != null) {
+                Result.success(response.data)
+            } else {
+                Result.failure(Exception(response.message))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun reportIncident(
         incidentType: IncidentType,
         description: String,
@@ -86,7 +111,10 @@ class RemoteApiService {
                             key = "photo",
                             value = file.readBytes(),
                             headers = Headers.build {
-                                append(HttpHeaders.ContentDisposition, "filename=\"photo_$index.jpg\"")
+                                append(
+                                    HttpHeaders.ContentDisposition,
+                                    "filename=\"photo_$index.jpg\""
+                                )
                             }
                         )
                     }
