@@ -28,7 +28,7 @@
     <string name="reports_header">Reports</string>
     <string name="settings_header">Settings</string>
 
-    <string name="reports_recent_incidents">Recent Incidents</string>
+    <string name="reports_recent_incidents">Recent Incidents Near You</string>
 
     <string name="tap_sos">Tap the SOS button to get nearest emergency responders within 10km</string>
     <string name="getting_location">Hang on, getting current coordinates…</string>

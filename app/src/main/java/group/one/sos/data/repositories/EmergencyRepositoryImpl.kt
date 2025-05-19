@@ -4,11 +4,14 @@ import group.one.sos.data.remote.RemoteApiService
 import group.one.sos.domain.contracts.EmergencyRepository
 import group.one.sos.domain.models.EmergencyResponse
 import group.one.sos.domain.models.EmergencyType
+import group.one.sos.domain.models.IncidentResponse
+import group.one.sos.domain.models.IncidentType
+import java.io.File
 import javax.inject.Inject
 
 class EmergencyRepositoryImpl @Inject constructor(
     private val apiService: RemoteApiService
-): EmergencyRepository {
+) : EmergencyRepository {
     override suspend fun getEmergencyServices(
         responder: EmergencyType,
         radius: Int,
@@ -16,5 +19,15 @@ class EmergencyRepositoryImpl @Inject constructor(
         long: Double,
     ): Result<List<EmergencyResponse>> {
         return apiService.getEmergencyServices(responder, radius, lat, long)
+    }
+
+    override suspend fun reportIncident(
+        incidentType: IncidentType,
+        description: String,
+        photos: List<File>,
+        lat: Double,
+        long: Double
+    ): Result<IncidentResponse> {
+        return apiService.reportIncident(incidentType, description, photos, lat, long)
     }
 }

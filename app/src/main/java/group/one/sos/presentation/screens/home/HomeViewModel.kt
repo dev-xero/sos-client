@@ -26,7 +26,6 @@ sealed class UiState {
     object Loading : UiState()
     object Fetching : UiState()
     object Base : UiState()
-    object LoadedResponders : UiState()
 }
 
 @HiltViewModel
