@@ -136,7 +136,7 @@ class ReportsViewModel @Inject constructor(
                 _uiState.value = UiState.Base
             }
             .onFailure { e ->
-                _error.value = e.message
+                _error.value = "Something went wrong with the server"
                 Log.e(Tag.Reports.name, e.message.toString())
                 _uiState.value = UiState.Base
             }

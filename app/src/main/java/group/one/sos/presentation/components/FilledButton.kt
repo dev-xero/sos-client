@@ -19,7 +19,8 @@ fun FilledButton(
     modifier: Modifier = Modifier,
     action: () -> Unit,
     textResource: Int,
-    secondary: Boolean = false
+    secondary: Boolean = false,
+    disabled: Boolean = false,
 ) {
     Button(
         onClick = action,
@@ -28,7 +29,8 @@ fun FilledButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = if (secondary) PaleMaroon else Primary,
             contentColor = White
-        )
+        ),
+        enabled = !disabled
     ) {
         Text(text = stringResource(textResource))
     }

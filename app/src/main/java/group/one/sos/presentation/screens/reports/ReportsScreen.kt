@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -186,7 +187,7 @@ private fun IncidentCard(modifier: Modifier = Modifier, incident: IncidentRespon
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .padding(8.dp)
         ) {
             if (!incident.pictures[0].url.isNullOrBlank()) {
                 AsyncImage(
@@ -200,34 +201,39 @@ private fun IncidentCard(modifier: Modifier = Modifier, incident: IncidentRespon
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
-            Text(
-                text = incident.description,
-                style = MaterialTheme.typography.headlineSmall,
-                color = Primary,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = if (incident.isAddressed) "Has been addressed" else "Has not been addressed",
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (incident.isAddressed) LimeGreen else Color(0xFFF5A822)
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = "Type: ${incident.typeOfIncident}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Row {
+
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
                 Text(
-                    text = "Latitude: ${incident.latitude}",
-                    style = MaterialTheme.typography.labelMedium
+                    text = incident.description,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Primary,
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Longitude: ${incident.longitude}",
-                    style = MaterialTheme.typography.labelMedium
+                    text = if (incident.isAddressed) "Has been addressed" else "Has not been addressed",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (incident.isAddressed) LimeGreen else Color(0xFFF5A822)
                 )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Type: ${incident.typeOfIncident}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Row {
+                    Text(
+                        text = "Latitude: ${incident.latitude}",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Longitude: ${incident.longitude}",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
             }
         }
     }
@@ -246,6 +252,8 @@ fun ReportIncidentSheet(
     var selectedType by remember { mutableStateOf(incidentTypes.first()) }
     var addressed by remember { mutableStateOf(false) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var errorMsg by remember { mutableStateOf("") }
+    var hasSelectedImage by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
@@ -254,6 +262,7 @@ fun ReportIncidentSheet(
         if (bitmap != null) {
             val uri = Utils.saveBitmapAndGetUri(context, bitmap)
             imageUri = uri
+            hasSelectedImage = true
         }
     }
 
@@ -261,21 +270,33 @@ fun ReportIncidentSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = if (isSystemInDarkTheme()) Maroon else Cherry,
-        contentColor = if (isSystemInDarkTheme()) White else Gray900
+        contentColor = if (isSystemInDarkTheme()) White else Gray900,
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(12.dp).heightIn(max = 900.dp)) {
             Text(
                 text = stringResource(R.string.report_an_incident),
                 style = MaterialTheme.typography.titleLarge
             )
+
             Spacer(modifier = Modifier.height(12.dp))
+
+            if (errorMsg.isNotEmpty()) {
+                Text(text = errorMsg, color = Primary, style = MaterialTheme.typography.labelSmall)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
             OutlinedTextField(
                 value = description,
-                onValueChange = { description = it },
+                onValueChange = {
+                    description = it
+                    errorMsg = ""
+                },
                 label = { Text("Description") },
                 modifier = Modifier.fillMaxWidth()
             )
+
             Spacer(modifier = Modifier.height(12.dp))
+
             // IncidentType dropdown
             var expanded by remember { mutableStateOf(false) }
 
@@ -290,7 +311,9 @@ fun ReportIncidentSheet(
                     onValueChange = {},
                     label = { Text("Type") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -307,7 +330,9 @@ fun ReportIncidentSheet(
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(12.dp))
+
             // Addressed Toggle
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -317,13 +342,18 @@ fun ReportIncidentSheet(
                 Text("Has been addressed?")
                 Switch(checked = addressed, onCheckedChange = { addressed = it })
             }
+
             Spacer(modifier = Modifier.height(12.dp))
+
             // Image capture
-            FilledButton(
-                action = { launcher.launch(null) },
-                textResource = R.string.snap_photo,
-                secondary = true
-            )
+               FilledButton(
+                   action = {
+                       launcher.launch(null)
+                       errorMsg = ""
+                   },
+                   textResource = R.string.take_photo,
+                   secondary = true
+               )
 
             imageUri?.let {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -337,14 +367,26 @@ fun ReportIncidentSheet(
                         .clip(RoundedCornerShape(12.dp))
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             FilledButton(
                 action = {
+                    if (description.isEmpty()) {
+                        errorMsg = "Please provide a description"
+                        return@FilledButton
+                    }
+                    if (imageUri == null) {
+                        errorMsg = "Please take a photo"
+                        return@FilledButton
+                    }
                     onSubmit(description, selectedType, addressed, imageUri)
                     onDismiss()
                 },
-                textResource = R.string.report_incident
+                textResource = R.string.report_incident,
+                secondary = description.isEmpty() || imageUri == null
             )
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
