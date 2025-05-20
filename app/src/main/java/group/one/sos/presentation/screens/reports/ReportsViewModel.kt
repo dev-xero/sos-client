@@ -16,13 +16,16 @@ import group.one.sos.domain.contracts.EmergencyRepository
 import group.one.sos.domain.models.IncidentResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class UiState {
     object Fetching : UiState()
-    object Base : UiState()
+    object Base: UiState()
 }
+
 
 @HiltViewModel
 class ReportsViewModel @Inject constructor(
@@ -30,11 +33,6 @@ class ReportsViewModel @Inject constructor(
     private val emergencyRepository: EmergencyRepository,
 ) : ViewModel() {
     private val _locationFlow = MutableStateFlow<Location?>(null)
-
-    private var hasSetBaseState = false;
-
-    private var locationCallBack: LocationCallback? = null
-
     private val _reports = MutableStateFlow<List<IncidentResponse>>(emptyList())
     val reports: StateFlow<List<IncidentResponse>> = _reports
 
@@ -44,10 +42,16 @@ class ReportsViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    private var hasSetBaseState = false
+    private var hasFetchedIncidents = false
+    private var locationCallBack: LocationCallback? = null
+
     init {
         startLocationUpdates()
+        observeLocation()
     }
 
+    // Begin observing location changes
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY, 1000L
@@ -77,28 +81,37 @@ class ReportsViewModel @Inject constructor(
         }
     }
 
-    fun getRecentIncidents() {
-        if (_locationFlow.value != null) {
-            viewModelScope.launch {
-                _uiState.value = UiState.Fetching
-                _error.value = null
-
-                emergencyRepository.getIncidents(
-                    radius = 200_000,
-                    lat = _locationFlow.value!!.latitude,
-                    long = _locationFlow.value!!.longitude,
-                )
-                    .onSuccess { res ->
-                        _reports.value = res
-                        Log.i(Tag.Home.name, res.toString())
-                    }
-                    .onFailure { e ->
-                        _error.value = e.message
-                        Log.e(Tag.Home.name, e.message.toString())
-                        _uiState.value = UiState.Base
-                    }
-            }
+    private fun observeLocation() {
+        viewModelScope.launch {
+            _locationFlow
+                .filterNotNull()
+                .filter { !hasFetchedIncidents }
+                .collect { location ->
+                    hasFetchedIncidents = true
+                    getRecentIncidents(location)
+                }
         }
+    }
+
+    private suspend fun getRecentIncidents(location: Location) {
+        _uiState.value = UiState.Fetching
+        _error.value = null
+
+        emergencyRepository.getIncidents(
+            radius = 200_000,
+            lat = location.latitude,
+            long = location.longitude,
+        )
+            .onSuccess { res ->
+                _reports.value = res
+                Log.i(Tag.Home.name, res.toString())
+                _uiState.value = UiState.Base
+            }
+            .onFailure { e ->
+                _error.value = e.message
+                Log.e(Tag.Home.name, e.message.toString())
+                _uiState.value = UiState.Base
+            }
     }
 
     override fun onCleared() {
