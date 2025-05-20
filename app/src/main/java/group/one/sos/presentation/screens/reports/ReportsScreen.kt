@@ -57,6 +57,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import group.one.sos.R
 import group.one.sos.core.utils.Utils
+import group.one.sos.core.utils.uriToFile
 import group.one.sos.domain.models.IncidentResponse
 import group.one.sos.domain.models.IncidentType
 import group.one.sos.presentation.components.BottomNavBar
@@ -75,6 +76,7 @@ import group.one.sos.presentation.theme.White
 fun ReportsScreen(modifier: Modifier = Modifier, navController: NavController) {
     val snackbarHostState = remember { SnackbarHostState() }
     val viewModel: ReportsViewModel = hiltViewModel()
+    val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -153,7 +155,12 @@ fun ReportsScreen(modifier: Modifier = Modifier, navController: NavController) {
                 IncidentType.OTHERS
             ),
             onSubmit = { description, selectedType, addressed, imageUri ->
-                viewModel.submitReport(description, selectedType, addressed, imageUri)
+                val photo = imageUri.let { uri -> context.uriToFile(uri) }
+                if (photo == null) {
+                    viewModel.showPhotoError()
+                    return@ReportIncidentSheet
+                }
+                viewModel.submitReport(description, selectedType, addressed, photo)
             }
         )
     }
@@ -246,7 +253,7 @@ fun ReportIncidentSheet(
     shouldShowBottomSheet: Boolean,
     onDismiss: () -> Unit,
     incidentTypes: List<IncidentType>,
-    onSubmit: (String, IncidentType, Boolean, Uri?) -> Unit
+    onSubmit: (String, IncidentType, Boolean, Uri) -> Unit
 ) {
     var description by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf(incidentTypes.first()) }
@@ -380,7 +387,7 @@ fun ReportIncidentSheet(
                         errorMsg = "Please take a photo"
                         return@FilledButton
                     }
-                    onSubmit(description, selectedType, addressed, imageUri)
+                    onSubmit(description, selectedType, addressed, imageUri!!)
                     onDismiss()
                 },
                 textResource = R.string.report_incident,

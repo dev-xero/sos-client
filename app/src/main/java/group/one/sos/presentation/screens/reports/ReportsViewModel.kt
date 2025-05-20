@@ -1,7 +1,6 @@
 package group.one.sos.presentation.screens.reports
 
 import android.location.Location
-import android.net.Uri
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -22,6 +21,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 sealed class UiState {
@@ -61,8 +61,36 @@ class ReportsViewModel @Inject constructor(
         }
     }
 
-    fun submitReport(description: String, selectedType: IncidentType, addressed: Boolean, imageUri: Uri?) {
+    fun submitReport(
+        description: String,
+        selectedType: IncidentType,
+        addressed: Boolean,
+        image: File
+    ) {
         Log.d(Tag.Reports.name, "Report Incident!")
+        Log.d(
+            Tag.Reports.name,
+            "description: $description\nselected type: ${selectedType.toString()}\naddressed: $addressed\nimage: ${image.isFile}"
+        )
+
+        viewModelScope.launch {
+            val location = _locationFlow.filterNotNull().first()
+
+            emergencyRepository.reportIncident(
+                description = description,
+                incidentType = selectedType,
+                photos = listOf(image),
+                lat = location.latitude,
+                long = location.longitude
+            ).onSuccess {
+                Log.i(Tag.Reports.name, "Incident reported successfully")
+                getRecentIncidents(location)
+            }.onFailure { e ->
+                _error.value = "We could not report this incident"
+                Log.e(Tag.Reports.name, e.message.toString())
+                _uiState.value = UiState.Base
+            }
+        }
     }
 
     override fun onCleared() {
@@ -74,6 +102,10 @@ class ReportsViewModel @Inject constructor(
 
     fun clearError() {
         _error.value = null
+    }
+
+    fun showPhotoError() {
+        _error.value = "Could not process this photo"
     }
 
     // Begin observing location changes

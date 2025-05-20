@@ -99,22 +99,23 @@ class RemoteApiService {
     ): Result<IncidentResponse> {
         return try {
             val response: ApiResponse<IncidentResponse> = httpClient.submitFormWithBinaryData(
-                url = "$baseURL/reportIncident",
+                url = "$baseURL/incidentReport",
                 formData = formData {
-                    append("typeOfIncident", incidentType.toString())
+                    incidentType.toString()
+                    append("typeOfIncident", incidentType.toString().lowercase())
                     append("description", description)
                     append("latitude", lat.toString())
                     append("longitude", long.toString())
 
                     photos.forEachIndexed { index, file ->
+                        Log.d("Upload", "Uploading file ${file.name}, size: ${file.length()}")
+
                         append(
-                            key = "photo",
+                            key = "pictures",
                             value = file.readBytes(),
                             headers = Headers.build {
-                                append(
-                                    HttpHeaders.ContentDisposition,
-                                    "filename=\"photo_$index.jpg\""
-                                )
+                                append(HttpHeaders.ContentDisposition, "form-data; name=\"pictures\"; filename=\"photo_$index.jpg\"")
+                                append(HttpHeaders.ContentType, "image/jpeg")
                             }
                         )
                     }
