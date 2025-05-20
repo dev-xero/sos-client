@@ -35,4 +35,7 @@
     <string name="fetching_responders">Finding nearest responders…</string>
 
     <string name="nearest_emergency_responders">Nearest Emergency Responders</string>
+    <string name="report_an_incident">Report an Incident</string>
+    <string name="snap_photo">Snap Photo</string>
+    <string name="report_incident">Report Incident</string>
 </resources>

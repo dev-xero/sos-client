@@ -1,6 +1,7 @@
 package group.one.sos.presentation.screens.reports
 
 import android.location.Location
+import android.net.Uri
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import group.one.sos.core.constants.Tag
 import group.one.sos.domain.contracts.EmergencyRepository
 import group.one.sos.domain.models.IncidentResponse
+import group.one.sos.domain.models.IncidentType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
@@ -59,6 +61,9 @@ class ReportsViewModel @Inject constructor(
         }
     }
 
+    fun submitReport(description: String, selectedType: IncidentType, addressed: Boolean, imageUri: Uri?) {
+        Log.d(Tag.Reports.name, "Report Incident!")
+    }
 
     override fun onCleared() {
         super.onCleared()
@@ -70,7 +75,6 @@ class ReportsViewModel @Inject constructor(
     fun clearError() {
         _error.value = null
     }
-
 
     // Begin observing location changes
     private fun startLocationUpdates() {
