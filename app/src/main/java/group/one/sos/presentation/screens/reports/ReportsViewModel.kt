@@ -18,12 +18,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class UiState {
     object Fetching : UiState()
-    object Base: UiState()
+    object Base : UiState()
 }
 
 
@@ -51,6 +52,26 @@ class ReportsViewModel @Inject constructor(
         observeLocation()
     }
 
+    fun getRecentIncidents() {
+        viewModelScope.launch {
+            val location = _locationFlow.filterNotNull().first()
+            getRecentIncidents(location)
+        }
+    }
+
+
+    override fun onCleared() {
+        super.onCleared()
+        locationCallBack?.let {
+            fusedLocationProviderClient.removeLocationUpdates(it)
+        }
+    }
+
+    fun clearError() {
+        _error.value = null
+    }
+
+
     // Begin observing location changes
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.Builder(
@@ -65,7 +86,10 @@ class ReportsViewModel @Inject constructor(
                         hasSetBaseState = true
                     }
                     _locationFlow.value = location
-                    Log.d(Tag.Reports.name, "Lat: ${location.latitude}, Long: ${location.longitude}")
+                    Log.d(
+                        Tag.Reports.name,
+                        "Lat: ${location.latitude}, Long: ${location.longitude}"
+                    )
                 }
             }
         }
@@ -104,20 +128,13 @@ class ReportsViewModel @Inject constructor(
         )
             .onSuccess { res ->
                 _reports.value = res
-                Log.i(Tag.Home.name, res.toString())
+                Log.i(Tag.Reports.name, res.toString())
                 _uiState.value = UiState.Base
             }
             .onFailure { e ->
                 _error.value = e.message
-                Log.e(Tag.Home.name, e.message.toString())
+                Log.e(Tag.Reports.name, e.message.toString())
                 _uiState.value = UiState.Base
             }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        locationCallBack?.let {
-            fusedLocationProviderClient.removeLocationUpdates(it)
-        }
     }
 }
