@@ -10,6 +10,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
+import dagger.hilt.android.lifecycle.HiltViewModel
 import group.one.sos.core.constants.Tag
 import group.one.sos.domain.contracts.EmergencyRepository
 import group.one.sos.domain.models.IncidentResponse
@@ -23,6 +24,7 @@ sealed class UiState {
     object Base : UiState()
 }
 
+@HiltViewModel
 class ReportsViewModel @Inject constructor(
     private val fusedLocationProviderClient: FusedLocationProviderClient,
     private val emergencyRepository: EmergencyRepository,
