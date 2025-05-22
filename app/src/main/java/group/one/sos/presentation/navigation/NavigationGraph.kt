@@ -11,7 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import group.one.sos.presentation.screens.contacts.ContactsResultScreen
 import group.one.sos.presentation.screens.contacts.ContactsScreen
+import group.one.sos.presentation.screens.contacts.ContactsViewModel
 import group.one.sos.presentation.screens.emergency_contacts.EmergencyContactsNavigator
 import group.one.sos.presentation.screens.emergency_contacts.EmergencyContactsScreen
 import group.one.sos.presentation.screens.home.HomeScreen
@@ -94,8 +96,17 @@ fun NavigationGraph(
             SOSRespondersScreen(navController = navController, viewModel = viewModel)
         }
 
-        composable(route = NavigationRoute.Contacts.route) {
-            ContactsScreen(navController = navController)
+        composable(route = NavigationRoute.Contacts.route) { backStackEntry ->
+           val viewModel: ContactsViewModel = hiltViewModel(backStackEntry)
+            ContactsScreen(navController = navController, viewModel = viewModel)
+        }
+
+        composable(route = NavigationRoute.ContactsResults.route) {
+            val parentEntry = remember {
+                navController.getBackStackEntry(NavigationRoute.Contacts.route)
+            }
+            val viewModel: ContactsViewModel = hiltViewModel(parentEntry)
+            ContactsResultScreen(navController = navController , viewModel = viewModel)
         }
 
         composable(route = NavigationRoute.Reports.route) {

@@ -79,7 +79,9 @@ class ReportsViewModel @Inject constructor(
             emergencyRepository.reportIncident(
                 description = description,
                 incidentType = selectedType,
-                photos = listOf(image),
+                // We need a list of images, but presently we don't support
+                // selecting multiple images
+                photos = image,
                 lat = location.latitude,
                 long = location.longitude
             ).onSuccess {

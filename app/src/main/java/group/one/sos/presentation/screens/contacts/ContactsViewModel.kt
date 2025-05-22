@@ -1,4 +1,4 @@
-package group.one.sos.presentation.screens.home
+package group.one.sos.presentation.screens.contacts
 
 import android.location.Location
 import android.os.Looper
@@ -29,26 +29,23 @@ sealed class UiState {
 }
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class ContactsViewModel @Inject constructor(
     private val fusedLocationProviderClient: FusedLocationProviderClient,
     private val emergencyRepository: EmergencyRepository
 ) : ViewModel() {
 
     private val _locationFlow = MutableStateFlow<Location?>(null)
-//    val locationFlow: StateFlow<Location?> = _locationFlow
-
-    private var hasSetBaseState = false;
-
-    private var locationCallBack: LocationCallback? = null
-
-    private val _services = MutableStateFlow<List<EmergencyResponse>>(emptyList())
-    val services: StateFlow<List<EmergencyResponse>> = _services
+    private var hasSetBaseState = false
+    private var locationCallback: LocationCallback? = null
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    private val _services = MutableStateFlow<List<EmergencyResponse>>(emptyList())
+    val services: StateFlow<List<EmergencyResponse>> = _services
 
     private val _navigateToResults = MutableSharedFlow<Unit>()
     val navigateToResults: SharedFlow<Unit> = _navigateToResults
@@ -57,13 +54,12 @@ class HomeViewModel @Inject constructor(
         startLocationUpdates()
     }
 
-    // Fetch user coordinates periodically
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY, 1000L
         ).build()
 
-        locationCallBack = object : LocationCallback() {
+        locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
                     if (!hasSetBaseState) {
@@ -71,7 +67,6 @@ class HomeViewModel @Inject constructor(
                         hasSetBaseState = true
                     }
                     _locationFlow.value = location
-                    Log.d(Tag.Home.name, "Lat: ${location.latitude}, Long: ${location.longitude}")
                 }
             }
         }
@@ -79,37 +74,32 @@ class HomeViewModel @Inject constructor(
         try {
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest,
-                locationCallBack!!,
+                locationCallback!!,
                 Looper.getMainLooper()
             )
         } catch (e: SecurityException) {
-            Log.e(Tag.Home.name, "Missing location permission", e)
+            _error.value = "Location permission missing"
         }
     }
 
-    fun sendSOSRequest() {
-        Log.i(Tag.Home.name, "SOS Sent Out!")
-        if (_locationFlow.value != null) {
-            viewModelScope.launch {
-                _uiState.value = UiState.Fetching
-                _error.value = null
+    fun fetchEmergencyServices(type: EmergencyType) {
+        val location = _locationFlow.value ?: return
+        viewModelScope.launch {
+            _uiState.value = UiState.Fetching
+            _error.value = null
 
-                emergencyRepository.getEmergencyServices(
-                    responder = EmergencyType.Police,
-                    radius = 10_000,
-                    lat = _locationFlow.value!!.latitude,
-                    long = _locationFlow.value!!.longitude,
-                )
-                    .onSuccess { res ->
-                        _services.value = res
-                        Log.i(Tag.Home.name, res.toString())
-                        _navigateToResults.emit(Unit)
-                    }
-                    .onFailure { e ->
-                        _error.value = e.message
-                        Log.e(Tag.Home.name, e.message.toString())
-                        _uiState.value = UiState.Base
-                    }
+            emergencyRepository.getEmergencyServices(
+                responder = type,
+                radius = 200_000,
+                lat = location.latitude,
+                long = location.longitude
+            ).onSuccess { res ->
+                _services.value = res
+                Log.i(Tag.Home.name, res.toString())
+                _navigateToResults.emit(Unit)
+            }.onFailure {
+                _error.value = it.message
+                _uiState.value = UiState.Base
             }
         }
     }
@@ -124,7 +114,7 @@ class HomeViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        locationCallBack?.let {
+        locationCallback?.let {
             fusedLocationProviderClient.removeLocationUpdates(it)
         }
     }

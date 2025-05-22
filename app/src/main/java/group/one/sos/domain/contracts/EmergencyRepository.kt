@@ -17,7 +17,7 @@ interface EmergencyRepository {
     suspend fun reportIncident(
         incidentType: IncidentType,
         description: String,
-        photos: List<File>,
+        photos: File,
         lat: Double,
         long: Double,
 
