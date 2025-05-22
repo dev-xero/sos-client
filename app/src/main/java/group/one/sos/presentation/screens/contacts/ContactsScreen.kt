@@ -1,5 +1,6 @@
 package group.one.sos.presentation.screens.contacts
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,7 +41,6 @@ import group.one.sos.R
 import group.one.sos.domain.models.EmergencyType
 import group.one.sos.presentation.components.BottomNavBar
 import group.one.sos.presentation.navigation.NavigationRoute
-import group.one.sos.presentation.screens.home.UiState
 import group.one.sos.presentation.theme.Cherry
 import group.one.sos.presentation.theme.PaleMaroon
 import group.one.sos.presentation.theme.Primary
@@ -71,7 +71,8 @@ fun ContactsScreen(
             )
         }
     ) { innerPadding ->
-        if (uiState == UiState.Loading) {
+        Log.d("Conctacts!", uiState.toString())
+        if (uiState == UiState.Loading || uiState == UiState.Fetching) {
             // Fullscreen loader
             Box(
                 modifier = Modifier

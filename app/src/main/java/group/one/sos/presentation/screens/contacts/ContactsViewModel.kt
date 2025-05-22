@@ -83,23 +83,24 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun fetchEmergencyServices(type: EmergencyType) {
-        val location = _locationFlow.value ?: return
-        viewModelScope.launch {
-            _uiState.value = UiState.Fetching
-            _error.value = null
+        if (_locationFlow.value != null) {
+            viewModelScope.launch {
+                _uiState.value = UiState.Fetching
+                _error.value = null
 
-            emergencyRepository.getEmergencyServices(
-                responder = type,
-                radius = 200_000,
-                lat = location.latitude,
-                long = location.longitude
-            ).onSuccess { res ->
-                _services.value = res
-                Log.i(Tag.Home.name, res.toString())
-                _navigateToResults.emit(Unit)
-            }.onFailure {
-                _error.value = it.message
-                _uiState.value = UiState.Base
+                emergencyRepository.getEmergencyServices(
+                    responder = type,
+                    radius = 200_000,
+                    lat = _locationFlow.value!!.latitude,
+                    long = _locationFlow.value!!.longitude
+                ).onSuccess { res ->
+                    _services.value = res
+                    Log.i(Tag.Home.name, res.toString())
+                    _navigateToResults.emit(Unit)
+                }.onFailure {
+                    _error.value = it.message
+                    _uiState.value = UiState.Base
+                }
             }
         }
     }
