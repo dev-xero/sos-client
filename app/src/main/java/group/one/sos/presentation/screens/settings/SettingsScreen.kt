@@ -132,7 +132,7 @@ private fun SettingsScreenTopBar(modifier: Modifier = Modifier) {
 
 @Composable
 private fun SearchRadiusSetting() {
-    var radius by remember { mutableStateOf(5) }
+    var radius by remember { mutableStateOf(10) }
 
     Column {
         Text(
@@ -169,13 +169,15 @@ private fun DefaultResponderSetting() {
             text = "Default Emergency Response",
             style = MaterialTheme.typography.titleMedium
         )
+        Spacer(modifier = Modifier.height(12.dp))
         Box {
             OutlinedButton(onClick = { expanded = true }) {
                 Text(selected)
             }
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 options.forEach {
                     DropdownMenuItem(

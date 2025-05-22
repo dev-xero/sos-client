@@ -90,7 +90,7 @@ class ContactsViewModel @Inject constructor(
 
                 emergencyRepository.getEmergencyServices(
                     responder = type,
-                    radius = 200_000,
+                    radius = 10_000,
                     lat = _locationFlow.value!!.latitude,
                     long = _locationFlow.value!!.longitude
                 ).onSuccess { res ->
