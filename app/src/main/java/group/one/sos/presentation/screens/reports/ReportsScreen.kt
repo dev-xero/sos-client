@@ -31,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -260,7 +259,6 @@ fun ReportIncidentSheet(
     var addressed by remember { mutableStateOf(false) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var errorMsg by remember { mutableStateOf("") }
-    var hasSelectedImage by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
@@ -269,7 +267,6 @@ fun ReportIncidentSheet(
         if (bitmap != null) {
             val uri = Utils.saveBitmapAndGetUri(context, bitmap)
             imageUri = uri
-            hasSelectedImage = true
         }
     }
 
@@ -279,7 +276,9 @@ fun ReportIncidentSheet(
         containerColor = if (isSystemInDarkTheme()) Maroon else Cherry,
         contentColor = if (isSystemInDarkTheme()) White else Gray900,
     ) {
-        Column(modifier = Modifier.padding(12.dp).heightIn(max = 900.dp)) {
+        Column(modifier = Modifier
+            .padding(12.dp)
+            .heightIn(max = 900.dp)) {
             Text(
                 text = stringResource(R.string.report_an_incident),
                 style = MaterialTheme.typography.titleLarge
@@ -341,26 +340,29 @@ fun ReportIncidentSheet(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Addressed Toggle
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Has been addressed?")
-                Switch(checked = addressed, onCheckedChange = { addressed = it })
-            }
+            // =================================================
+            // Commenting out since the server doesn't allow it
+            // ==================================================
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Text("Has been addressed?")
+//                Switch(checked = addressed, onCheckedChange = { addressed = it })
+//            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
             // Image capture
-               FilledButton(
-                   action = {
-                       launcher.launch(null)
-                       errorMsg = ""
-                   },
-                   textResource = R.string.take_photo,
-                   secondary = true
-               )
+            FilledButton(
+               action = {
+                   launcher.launch(null)
+                   errorMsg = ""
+               },
+               textResource = R.string.take_photo,
+               secondary = true
+            )
 
             imageUri?.let {
                 Spacer(modifier = Modifier.height(8.dp))

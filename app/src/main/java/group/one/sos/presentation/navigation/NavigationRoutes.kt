@@ -8,6 +8,7 @@ sealed class NavigationRoute(val route: String) {
     data object Home : NavigationRoute("home")
     data object SOSResponders: NavigationRoute("sos_responders")
     data object Contacts : NavigationRoute("contacts")
+    data object ContactsResults: NavigationRoute("contacts_result")
     data object Reports : NavigationRoute("reports")
     data object Settings : NavigationRoute("settings")
 }

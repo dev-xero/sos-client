@@ -79,4 +79,5 @@ dependencies {
     implementation(libs.ktor.client.logging)
     // Coil for image loading
     implementation(libs.coil.compose)
+    implementation(libs.ktor.client.okhttp)
 }
