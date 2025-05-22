@@ -164,14 +164,14 @@ private fun DefaultResponderSetting() {
     var selected by remember { mutableStateOf(options[0]) }
     var expanded by remember { mutableStateOf(false) }
 
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Default Emergency Response",
             style = MaterialTheme.typography.titleMedium
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Box {
-            OutlinedButton(onClick = { expanded = true }) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
                 Text(selected)
             }
             DropdownMenu(
@@ -185,7 +185,7 @@ private fun DefaultResponderSetting() {
                         onClick = {
                             selected = it
                             expanded = false
-                        }
+                        },
                     )
                 }
             }
@@ -252,16 +252,16 @@ fun NotificationToggleSetting() {
         Text("Enable Notifications", style = MaterialTheme.typography.bodyLarge)
         Switch(
             checked = enabled, onCheckedChange = { enabled = it }, thumbContent = if (enabled) {
-            {
-                Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                )
-            }
-        } else {
-            null
-        })
+                {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                    )
+                }
+            } else {
+                null
+            })
     }
 }
 
