@@ -4,15 +4,22 @@ import android.util.Log
 import group.one.sos.domain.models.ApiResponse
 import group.one.sos.domain.models.EmergencyResponse
 import group.one.sos.domain.models.EmergencyType
+import group.one.sos.domain.models.IncidentResponse
+import group.one.sos.domain.models.IncidentType
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import java.io.File
 
 class RemoteApiService {
     private val httpClient = HttpClient {
@@ -31,7 +38,7 @@ class RemoteApiService {
 
     private val baseURL = "https://sosbackend-api.onrender.com/api"
 
-     suspend fun getEmergencyServices(
+    suspend fun getEmergencyServices(
         responder: EmergencyType,
         radius: Int,
         lat: Double,
@@ -47,6 +54,73 @@ class RemoteApiService {
                         parameters.append("radius", radius.toString())
                     }
                 }.body()
+
+            if (response.success && response.data != null) {
+                Result.success(response.data)
+            } else {
+                Result.failure(Exception(response.message))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getIncidents(
+        lat: Double,
+        long: Double,
+        radius: Int
+    ): Result<List<IncidentResponse>> {
+        return try {
+            val response: ApiResponse<List<IncidentResponse>> =
+                httpClient.get("$baseURL/incidents") {
+                    url {
+                        parameters.append("latitude", lat.toString())
+                        parameters.append("longitude", long.toString())
+                        parameters.append("radius", radius.toString())
+                    }
+                }.body()
+
+            if (response.success && response.data != null) {
+                Result.success(response.data)
+            } else {
+                Result.failure(Exception(response.message))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun reportIncident(
+        incidentType: IncidentType,
+        description: String,
+        photos: List<File>,
+        lat: Double,
+        long: Double,
+    ): Result<IncidentResponse> {
+        return try {
+            val response: ApiResponse<IncidentResponse> = httpClient.submitFormWithBinaryData(
+                url = "$baseURL/incidentReport",
+                formData = formData {
+                    incidentType.toString()
+                    append("typeOfIncident", incidentType.toString().lowercase())
+                    append("description", description)
+                    append("latitude", lat.toString())
+                    append("longitude", long.toString())
+
+                    photos.forEachIndexed { index, file ->
+                        Log.d("Upload", "Uploading file ${file.name}, size: ${file.length()}")
+
+                        append(
+                            key = "pictures",
+                            value = file.readBytes(),
+                            headers = Headers.build {
+                                append(HttpHeaders.ContentDisposition, "form-data; name=\"pictures\"; filename=\"photo_$index.jpg\"")
+                                append(HttpHeaders.ContentType, "image/jpeg")
+                            }
+                        )
+                    }
+                }
+            ).body()
 
             if (response.success && response.data != null) {
                 Result.success(response.data)

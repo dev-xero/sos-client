@@ -77,4 +77,6 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ktor.client.logging)
+    // Coil for image loading
+    implementation(libs.coil.compose)
 }

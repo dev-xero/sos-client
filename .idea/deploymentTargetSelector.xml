@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-04T23:56:12.429514349Z">
+        <DropdownSelection timestamp="2025-05-20T12:16:14.652088541Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/xero/.android/avd/Android_API_35.ini" />
+              <DeviceId pluginId="Default" identifier="serial=192.168.140.156:5555;connection=a865e34e" />
             </handle>
           </Target>
         </DropdownSelection>

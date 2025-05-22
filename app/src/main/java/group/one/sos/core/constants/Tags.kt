@@ -6,4 +6,5 @@ sealed class Tag(val name: String) {
     data object LocationService : Tag(name = "Location Service")
     data object EmergencyContact: Tag(name = "Emergency Contact")
     data object Home : Tag(name = "Home")
+    data object Reports : Tag(name = "Reports")
 }
